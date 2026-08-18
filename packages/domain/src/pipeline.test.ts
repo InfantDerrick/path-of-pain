@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import { defaultPipelineStages, visibleDefaultStages } from "./pipeline";
 
 describe("default pipeline", () => {
-  it("starts at Saved and ends at Accepted", () => {
+  it("starts at Saved and keeps terminal endings at the end", () => {
     expect(defaultPipelineStages[0]?.slug).toBe("saved");
-    expect(defaultPipelineStages.at(-1)?.slug).toBe("accepted");
+    expect(defaultPipelineStages.slice(-3).map((stage) => stage.slug)).toEqual([
+      "accepted",
+      "rejected",
+      "ghosted",
+    ]);
   });
 
   it("keeps Team Match hidden by default", () => {

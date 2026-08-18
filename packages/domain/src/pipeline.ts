@@ -1,6 +1,7 @@
 export type TerminalStageType =
   | "accepted"
   | "rejected"
+  | "ghosted"
   | "withdrawn"
   | "expired"
   | "closed"
@@ -41,6 +42,8 @@ export const defaultPipelineStages: readonly DefaultPipelineStage[] = [
   { name: "Offer", slug: "offer", order: 7, terminalType: null },
   { name: "Negotiation", slug: "negotiation", order: 8, terminalType: null },
   { name: "Accepted", slug: "accepted", order: 9, terminalType: "accepted" },
+  { name: "Rejected", slug: "rejected", order: 10, terminalType: "rejected" },
+  { name: "Ghosted", slug: "ghosted", order: 11, terminalType: "ghosted" },
 ];
 
 export function visibleDefaultStages() {

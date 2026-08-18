@@ -171,7 +171,7 @@ export function OpportunityForm({
           className="min-h-28 w-full rounded-lg border border-line bg-background px-3 py-2 outline-none ring-accent/30 transition focus:ring-2"
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
-          placeholder="How you found it, who referred you, warning signs, faint hope"
+          placeholder="How you found it, who referred you, what felt promising, what felt off"
         />
       </label>
       <label className="flex items-center gap-2 text-sm">
@@ -193,8 +193,8 @@ export function OpportunityForm({
           <span>
             <span className="block font-medium">Enrich after saving</span>
             <span className="mt-0.5 block text-xs leading-5 text-muted">
-              Optional if you included a URL. Leave it off for a purely
-              hand-labeled scrap.
+              Optional if you included a URL. Leave it off when the record is
+              already clear enough.
             </span>
           </span>
         </label>
@@ -217,7 +217,7 @@ export function OpportunityForm({
         type="submit"
         disabled={pending}
       >
-        {pending ? "Saving..." : "Save opportunity"}
+        {pending ? "Saving..." : "Save role"}
       </button>
     </form>
   );

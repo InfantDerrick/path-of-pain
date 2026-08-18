@@ -5,7 +5,7 @@ import { formatRelativeTime } from "@/lib/format";
 import { getSession } from "@/lib/session";
 
 export const metadata = {
-  title: "Inbox",
+  title: "Sightings",
 };
 
 export default async function InboxPage() {
@@ -18,24 +18,24 @@ export default async function InboxPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-6">
-      <h1 className="text-xl font-semibold">Needs attention</h1>
+      <h1 className="text-xl font-semibold">Sightings</h1>
       <p className="mt-2 text-sm leading-6 text-muted">
-        Follow-ups, overdue tasks, failed parsing, and other sharp little edges
-        will collect here. Today it is mercifully quiet.
+        Small movements surface here: replies, tasks, missed threads, and the
+        parts of the search that want attention before they become regret.
       </p>
       <section className="mt-6 rounded-2xl border border-line bg-panel p-5">
         <p className="text-sm text-muted">Active roles</p>
         <p className="mt-1 font-serif text-3xl">{dashboard.counts.active}</p>
         <p className="mt-3 text-sm text-muted">
           {dashboard.counts.needsAttention === 0
-            ? "Nothing is yelling. A rare and delicate peace."
-            : `${dashboard.counts.needsAttention} things are tapping the glass.`}
+            ? "Nothing is asking for you right now. Let that count."
+            : `${dashboard.counts.needsAttention} things need a look.`}
         </p>
         <Link
           href="/applications"
           className="mt-4 inline-flex h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground"
         >
-          Open applications
+          Open trail
         </Link>
       </section>
       <section className="mt-4 grid gap-4">
@@ -73,7 +73,7 @@ export default async function InboxPage() {
             href={`/applications/${item.opportunityId}`}
             className="rounded-lg border border-line bg-panel p-4"
           >
-            <p className="text-sm font-medium">Parser hit a wall</p>
+            <p className="text-sm font-medium">Parser stalled</p>
             <p className="mt-1 text-xs text-muted">
               {item.companyName} · {item.error ?? "No error recorded"}
             </p>

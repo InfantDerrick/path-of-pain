@@ -1,6 +1,7 @@
 export const opportunityStatuses = [
   "ACTIVE",
   "REJECTED",
+  "GHOSTED",
   "WITHDRAWN",
   "ACCEPTED",
   "EXPIRED",
@@ -11,6 +12,7 @@ export type OpportunityStatus = (typeof opportunityStatuses)[number];
 
 export const terminalStatuses: readonly OpportunityStatus[] = [
   "REJECTED",
+  "GHOSTED",
   "WITHDRAWN",
   "ACCEPTED",
   "EXPIRED",
@@ -26,6 +28,7 @@ export const eventTypes = [
   "INTERVIEW_COMPLETED",
   "STAGE_CHANGED",
   "REJECTED",
+  "GHOSTED",
   "OFFER_RECEIVED",
   "OFFER_ACCEPTED",
   "WITHDRAWN",

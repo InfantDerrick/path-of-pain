@@ -27,8 +27,8 @@ function labelForType(type: string) {
   const labels: Record<string, string> = {
     application_received: "Application receipt",
     assessment: "Assessment",
-    interview_request: "Interview signal",
-    offer: "Offer signal",
+    interview_request: "Interview note",
+    offer: "Offer note",
     rejection: "Possible rejection",
     follow_up: "Follow-up",
   };
@@ -38,10 +38,10 @@ function labelForType(type: string) {
 function confirmLabel(type: string) {
   const labels: Record<string, string> = {
     application_received: "Mark received",
-    assessment: "Add ordeal",
+    assessment: "Add assessment",
     interview_request: "Add interview",
     offer: "Record offer",
-    rejection: "Write it",
+    rejection: "Record outcome",
   };
   return labels[type] ?? "Confirm";
 }
@@ -67,7 +67,7 @@ export function EmailSuggestionCard({
         const payload = (await response.json().catch(() => null)) as {
           error?: string;
         } | null;
-        setError(payload?.error ?? "Could not settle this signal.");
+        setError(payload?.error ?? "Could not resolve this signal.");
         return;
       }
       router.refresh();
@@ -86,7 +86,7 @@ export function EmailSuggestionCard({
         </span>
         <span className="min-w-0 flex-1">
           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-            Something moved
+            Something changed
           </span>
           <span className="mt-1 block text-sm font-semibold text-foreground">
             {labelForType(suggestion.type)} from{" "}
@@ -171,7 +171,7 @@ export function EmailSuggestionCard({
               onClick={() => resolve("wrong-job")}
               type="button"
             >
-              Wrong job
+              Wrong role
             </button>
             <button
               className="inline-flex h-10 items-center justify-center rounded-lg border border-line bg-panel px-3 text-sm font-medium text-muted disabled:opacity-60"

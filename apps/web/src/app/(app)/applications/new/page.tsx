@@ -1,7 +1,7 @@
 import { AddPainFlow } from "@/components/opportunities/add-pain-flow";
 
 export const metadata = {
-  title: "Add job",
+  title: "Add role",
 };
 
 export default function NewOpportunityPage() {

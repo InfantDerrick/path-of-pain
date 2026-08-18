@@ -128,21 +128,21 @@ export function EvidencePanel({
   }
 
   return (
-    <section className="mt-6 rounded-lg border border-line bg-panel p-4 shadow-[0_18px_46px_-38px_var(--shadow-soft)]">
+    <section className="mt-6 min-w-0 overflow-hidden rounded-lg border border-line bg-panel p-4 shadow-[0_18px_46px_-38px_var(--shadow-soft)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
-            Record vault
+            Proof
           </p>
-          <h2 className="mt-1 text-lg font-semibold">Receipts for the climb</h2>
+          <h2 className="mt-1 text-lg font-semibold">Things worth keeping</h2>
         </div>
         <div className="rounded-full border border-line bg-background px-3 py-1 text-xs text-muted">
-          {snapshots.length + contacts.length + attachments.length} scraps kept
+          {snapshots.length + contacts.length + attachments.length} saved
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        <div className="rounded-lg border border-line bg-background p-3">
+      <div className="mt-4 grid min-w-0 gap-3 md:grid-cols-3">
+        <div className="min-w-0 rounded-lg border border-line bg-background p-3">
           <p className="text-sm font-medium">Original posting</p>
           {latestSnapshot ? (
             <div className="mt-3">
@@ -162,13 +162,13 @@ export function EvidencePanel({
             </div>
           ) : (
             <p className="mt-3 text-sm leading-6 text-muted">
-              No captured posting yet. The next successful enrichment should pin
-              one here.
+              No captured posting yet. The next successful enrichment should
+              keep a copy before the page quietly changes.
             </p>
           )}
         </div>
 
-        <div className="rounded-lg border border-line bg-background p-3 md:col-span-2">
+        <div className="min-w-0 rounded-lg border border-line bg-background p-3 md:col-span-2">
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-medium">Contacts</p>
             <button
@@ -180,46 +180,46 @@ export function EvidencePanel({
             </button>
           </div>
           {contactOpen ? (
-            <form className="mt-3 grid gap-2" onSubmit={addContact}>
-              <div className="grid gap-2 sm:grid-cols-2">
+            <form className="mt-3 grid min-w-0 gap-2" onSubmit={addContact}>
+              <div className="grid min-w-0 gap-2 sm:grid-cols-2">
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="name"
                   placeholder="Name"
                   required
                 />
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="relationship"
                   placeholder="Relationship"
                 />
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="role"
                   placeholder="Role"
                 />
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="email"
                   placeholder="Email"
                   type="email"
                 />
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="phone"
                   placeholder="Phone"
                 />
                 <input
-                  className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+                  className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
                   name="url"
                   placeholder="Profile URL"
                   type="url"
                 />
               </div>
               <textarea
-                className="min-h-20 rounded-lg border border-line bg-panel px-3 py-2 text-sm outline-none"
+                className="min-h-20 min-w-0 rounded-lg border border-line bg-panel px-3 py-2 text-sm outline-none"
                 name="notes"
-                placeholder="Context, warnings, favors owed"
+                placeholder="Context, warnings, promises made casually"
               />
               <button
                 className="h-10 rounded-lg bg-accent px-3 text-sm font-medium text-accent-foreground disabled:opacity-60"
@@ -233,8 +233,8 @@ export function EvidencePanel({
           <div className="mt-3 grid gap-2">
             {contacts.length === 0 ? (
               <p className="text-sm text-muted">
-                Nobody on the board yet. Add the recruiter before their name
-                disappears into inbox fog.
+                Nobody on the record yet. Add the recruiter before their name
+                becomes another half-remembered thread.
               </p>
             ) : (
               contacts.map((item) => (
@@ -275,7 +275,7 @@ export function EvidencePanel({
         </div>
       </div>
 
-      <div className="mt-3 rounded-lg border border-line bg-background p-3">
+      <div className="mt-3 min-w-0 rounded-lg border border-line bg-background p-3">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium">Files</p>
           <button
@@ -291,18 +291,18 @@ export function EvidencePanel({
         </div>
         {fileOpen ? (
           <form
-            className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]"
+            className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
             onSubmit={addAttachment}
           >
             <input
-              className="h-10 rounded-lg border border-line bg-panel px-3 py-2 text-sm outline-none"
+              className="h-10 min-w-0 max-w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm outline-none file:mr-3 file:rounded-md file:border-0 file:bg-accent/10 file:px-2 file:py-1 file:text-xs file:font-medium file:text-accent"
               name="file"
               ref={fileRef}
               required
               type="file"
             />
             <select
-              className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
+              className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none"
               name="kind"
             >
               <option value="resume">Resume</option>
@@ -311,24 +311,24 @@ export function EvidencePanel({
               <option value="other">Other</option>
             </select>
             <input
-              className="h-10 rounded-lg border border-line bg-panel px-3 text-sm outline-none sm:col-span-2"
+              className="h-10 min-w-0 rounded-lg border border-line bg-panel px-3 text-sm outline-none sm:col-span-2"
               name="notes"
-              placeholder="Why this artifact matters"
+              placeholder="Why this file matters"
             />
             <button
-              className="h-10 rounded-lg bg-accent px-3 text-sm font-medium text-accent-foreground disabled:opacity-60 sm:col-span-2"
+              className="h-10 min-w-0 rounded-lg bg-accent px-3 text-sm font-medium text-accent-foreground disabled:opacity-60 sm:col-span-2"
               disabled={pending === "file"}
               type="submit"
             >
-              {pending === "file" ? "Sealing..." : "Seal into vault"}
+              {pending === "file" ? "Saving..." : "Save file"}
             </button>
           </form>
         ) : null}
         <div className="mt-3 grid gap-2">
           {attachments.length === 0 ? (
             <p className="text-sm text-muted">
-              No files yet. Resumes, recruiter packets, and offer scrolls can
-              live here.
+              No files yet. Resumes, recruiter notes, and offer letters can stay
+              here.
             </p>
           ) : (
             attachments.map((item) => (

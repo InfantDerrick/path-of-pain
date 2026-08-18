@@ -57,10 +57,11 @@ export default async function OpportunityDetailPage({
         status={detail.enrichmentStatus}
         error={detail.enrichmentError}
       />
+      <MobileDetailActions />
       <div className="mt-6">
         <OpportunityEditor opportunity={detail} />
       </div>
-      <div id="stage" className="scroll-mt-4">
+      <div id="stage" className="scroll-mt-28">
         <ProcessPanel
           opportunityId={detail.id}
           stageId={detail.stageId}
@@ -92,7 +93,7 @@ export default async function OpportunityDetailPage({
           createdAt: item.createdAt.toISOString(),
         }))}
       />
-      <section id="timeline" className="mt-8 scroll-mt-4">
+      <section id="timeline" className="mt-8 scroll-mt-28">
         <h2 className="text-sm font-medium text-muted">Timeline</h2>
         <ol className="mt-3 flex flex-col gap-3">
           {detail.events.map((event) => (
@@ -110,7 +111,6 @@ export default async function OpportunityDetailPage({
           ))}
         </ol>
       </section>
-      <MobileDetailActions />
     </main>
   );
 }

@@ -20,16 +20,18 @@ type Interview = {
   meetingUrl: string | null;
 };
 
-const ordealLabels = [
-  "Found the door",
-  "Sent into the maze",
-  "Timed puzzle",
-  "Human checkpoint",
-  "More humans",
-  "Boss room",
-  "Offer altar",
-  "Rusty bargaining table",
-  "Escaped",
+const stageNotes = [
+  "A possibility, not a promise",
+  "Sent and waiting",
+  "Timed proof",
+  "First human read",
+  "Technical read",
+  "The long conversation",
+  "Get it in writing",
+  "Terms need care",
+  "This one can rest",
+  "Closed, and it hurt",
+  "The void has spoken by not speaking",
 ];
 
 export function ProcessPanel({
@@ -182,7 +184,7 @@ export function ProcessPanel({
                       active ? "text-accent-foreground/80" : "text-muted"
                     }`}
                   >
-                    {ordealLabels[index] ?? "Another ledge"}
+                    {stageNotes[index] ?? "Another step"}
                   </span>
                 </button>
               );
@@ -207,7 +209,7 @@ export function ProcessPanel({
       <div className="rounded-lg border border-line bg-panel p-4">
         <h2 className="text-sm font-medium text-muted">Quick tasks</h2>
         <div className="mt-3 flex flex-wrap gap-2">
-          {["Follow up", "Prepare OA", "Send thank-you"].map((title) => (
+          {["Follow up", "Prepare notes", "Send thank-you"].map((title) => (
             <button
               key={title}
               type="button"
@@ -228,7 +230,7 @@ export function ProcessPanel({
             required
             value={taskTitle}
             onChange={(event) => setTaskTitle(event.target.value)}
-            placeholder="Next tiny ordeal"
+            placeholder="Next small thing"
           />
           <input
             className="h-10 rounded-lg border border-line bg-background px-3 text-sm outline-none"

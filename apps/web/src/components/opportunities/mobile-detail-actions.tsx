@@ -1,38 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { cn } from "@jobtracker/ui";
+import { FileText, History, type LucideIcon, Milestone } from "lucide-react";
 
 const actions = [
-  { href: "#notes", label: "Note" },
-  { href: "#stage", label: "Stage" },
-  { href: "#timeline", label: "Log" },
+  { href: "#notes", label: "Note", icon: FileText },
+  { href: "#stage", label: "Stage", icon: Milestone },
+  { href: "#timeline", label: "Log", icon: History },
 ];
 
-export function MobileDetailActions() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 160);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
+function MobileDetailAction({
+  href,
+  label,
+  Icon,
+}: {
+  href: string;
+  label: string;
+  Icon: LucideIcon;
+}) {
   return (
-    <div
-      className={`fixed inset-x-3 bottom-40 z-30 grid grid-cols-3 gap-2 rounded-lg border border-line bg-panel/95 p-2 shadow-[0_20px_60px_-30px_var(--shadow-soft)] backdrop-blur md:hidden ${
-        visible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-      } transition`}
+    <a
+      className={cn(
+        "flex h-12 min-w-0 items-center justify-center gap-2 rounded-md border border-line bg-background/75 px-2 text-sm font-semibold text-foreground transition",
+        "active:translate-y-px hover:border-accent/55 hover:text-accent",
+      )}
+      href={href}
+    >
+      <Icon className="size-4 shrink-0 text-accent" strokeWidth={2.1} />
+      <span className="truncate">{label}</span>
+    </a>
+  );
+}
+
+export function MobileDetailActions() {
+  return (
+    <nav
+      aria-label="Role shortcuts"
+      className="sticky top-[calc(env(safe-area-inset-top)+4.75rem)] z-20 mt-4 grid grid-cols-3 gap-2 rounded-lg border border-line bg-panel/95 p-2 shadow-[0_18px_45px_-38px_var(--shadow-soft)] backdrop-blur md:hidden"
     >
       {actions.map((action) => (
-        <a
-          className="flex h-11 items-center justify-center rounded-md bg-background text-sm font-medium text-foreground"
-          href={action.href}
+        <MobileDetailAction
           key={action.href}
-        >
-          {action.label}
-        </a>
+          href={action.href}
+          label={action.label}
+          Icon={action.icon}
+        />
       ))}
-    </div>
+    </nav>
   );
 }

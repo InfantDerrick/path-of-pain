@@ -211,6 +211,9 @@ function mappedStageEvent(slug: string, terminalType: string | null) {
   if (terminalType === "rejected") {
     return "REJECTED";
   }
+  if (terminalType === "ghosted") {
+    return "GHOSTED";
+  }
   return null;
 }
 

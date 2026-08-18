@@ -24,14 +24,14 @@ export default async function SettingsPage() {
     <main className="mx-auto w-full max-w-xl px-4 py-6">
       <h1 className="text-xl font-semibold">Settings</h1>
       <p className="mt-2 text-sm text-muted">
-        {APP_NAME} {APP_VERSION} · self-hosted, no telemetry, no witness but
-        Postgres.
+        {APP_NAME} {APP_VERSION} · self-hosted, no telemetry, one database that
+        remembers just enough.
       </p>
       <section className="mt-6 rounded-2xl border border-line bg-panel p-5">
         <h2 className="font-medium">Appearance</h2>
         <p className="mt-1 text-sm text-muted">
-          Paper in the light, ember in the dark, just enough texture to remember
-          this is a record of human endurance.
+          Paper in the light, ember in the dark, enough texture to make the day
+          feel touched by a human hand.
         </p>
         <div className="mt-4">
           <ThemeToggle />
@@ -40,16 +40,16 @@ export default async function SettingsPage() {
       <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
         <h2 className="font-medium">Email signals</h2>
         <p className="mt-1 text-sm text-muted">
-          Connect IMAP with an app password. The climb gets watched, the letters
-          do not get archived.
+          Connect IMAP with an app password. Recent mail is read for signals;
+          the full letters are not stored.
         </p>
         <EmailSettings connections={emailConnections} />
       </section>
       <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
-        <h2 className="font-medium">Pipeline stages</h2>
+        <h2 className="font-medium">Stages</h2>
         <p className="mt-1 text-sm text-muted">
-          Rename, reorder, or hide the trail markers. Let's hope we don't stay
-          in Team Matching forever.
+          Rename, reorder, or hide the parts of the process. Keep the names that
+          feel true enough to use.
         </p>
         <StageSettings stages={stages} />
       </section>

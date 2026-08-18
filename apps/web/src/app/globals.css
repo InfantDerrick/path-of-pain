@@ -124,16 +124,40 @@ select {
 @keyframes stage-reward-toast {
   0% {
     opacity: 0;
-    transform: translate(-50%, 0.5rem);
+    transform: translate(-50%, calc(0.7rem + var(--toast-lift, 0rem)))
+      scale(0.98);
   }
-  14%,
-  86% {
+  12% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -0.1rem) scale(1.01);
+  }
+  20%,
+  88% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, 0.5rem);
+    transform: translate(-50%, 0.5rem) scale(0.99);
+  }
+}
+
+@keyframes stage-toast-needle {
+  0% {
+    transform: translateX(-18%) scaleX(0.18);
+    opacity: 0;
+  }
+  18% {
+    transform: translateX(0) scaleX(0.5);
+    opacity: 1;
+  }
+  58% {
+    transform: translateX(72%) scaleX(0.24);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(120%) scaleX(0.12);
+    opacity: 0;
   }
 }
 
@@ -142,7 +166,42 @@ select {
 }
 
 .stage-reward-toast {
-  animation: stage-reward-toast 2600ms ease both;
+  animation: stage-reward-toast 6400ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+.stage-reward-toast::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle, var(--paper-fleck) 0 1px, transparent 1.4px),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 38%,
+      color-mix(in srgb, var(--accent) 7%, transparent)
+    );
+  background-size:
+    13px 13px,
+    auto;
+  opacity: 0.72;
+}
+
+.stage-toast-needle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70%;
+  height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 72%, transparent),
+    transparent
+  );
+  animation: stage-toast-needle 1500ms ease-out both;
 }
 
 @keyframes add-pain-orbit {

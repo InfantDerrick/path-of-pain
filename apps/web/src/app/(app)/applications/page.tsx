@@ -4,7 +4,7 @@ import { ApplicationsBoard } from "@/components/opportunities/applications-board
 import { getSession } from "@/lib/session";
 
 export const metadata = {
-  title: "Applications",
+  title: "Trail",
 };
 
 export default async function ApplicationsPage() {
@@ -17,38 +17,41 @@ export default async function ApplicationsPage() {
     listOpportunities(session.user.id),
     getVisibleStages(session.user.id),
   ]);
+  const activeCount = opportunities.filter(
+    (opportunity) => opportunity.status === "ACTIVE",
+  ).length;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-6">
       <div className="flex items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Applications</h1>
+          <h1 className="text-xl font-semibold">Trail</h1>
           <p className="mt-1 text-sm text-muted">
-            {opportunities.length === 0
-              ? "A clean trailhead. Suspicious, but beautiful."
-              : `${opportunities.length} tracked`}
+            {activeCount === 0
+              ? "No open loops yet. Enjoy the silence while it lasts."
+              : `${activeCount} roles being carried`}
           </p>
         </div>
         <Link
           href="/applications/new"
           className="hidden h-10 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground md:inline-flex"
         >
-          Add job
+          Add role
         </Link>
       </div>
 
       {opportunities.length === 0 ? (
         <section className="mt-8 rounded-2xl border border-dashed border-line bg-panel p-6 text-center">
-          <p className="font-medium">No pain logged yet</p>
+          <p className="font-medium">No roles saved yet</p>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Paste a posting URL and let the worker scrape meaning from the
-            hiring page ritual. Manual entry is still here for the weird ones.
+            Paste a posting URL and we’ll keep the useful parts. Manual entry is
+            here when the page gives you nothing but vibes.
           </p>
           <Link
             href="/applications/new"
             className="mt-4 inline-flex h-11 items-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-foreground"
           >
-            Start the trail
+            Add the first role
           </Link>
         </section>
       ) : (

@@ -2,7 +2,7 @@
   "id": "/applications",
   "name": "Path of Pain",
   "short_name": "Path of Pain",
-  "description": "A private paper trail for the job hunt's many tiny ordeals.",
+  "description": "A private paper trail for the job hunt.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "/applications",
@@ -53,7 +53,7 @@
   ],
   "shortcuts": [
     {
-      "name": "Add pain",
+      "name": "Add role",
       "short_name": "Add",
       "description": "Paste a job URL into the trail.",
       "url": "/applications/new",
@@ -67,9 +67,9 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Flare-ups",
-      "short_name": "Flare",
-      "description": "Review email signals that need a decision.",
+      "name": "Sightings",
+      "short_name": "Sightings",
+      "description": "Review small movements that need a decision.",
       "url": "/inbox",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }

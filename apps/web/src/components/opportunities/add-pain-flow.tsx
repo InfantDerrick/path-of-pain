@@ -14,12 +14,13 @@ type EnrichState =
   | "failed";
 
 const enrichCopy: Record<EnrichState, string> = {
-  idle: "Paste the posting and let the page confess.",
-  saving: "Pinning the scrap to the board...",
-  queued: "Queued. The little worker is sharpening its pencil.",
-  running: "Reading the runes, salary ranges, logos, and tiny legal footnotes.",
-  succeeded: "Enriched. The ordeal has a name now.",
-  failed: "Saved, but enrichment tripped on a loose floorboard.",
+  idle: "Paste the posting. We’ll pull out what matters and leave the noise behind.",
+  saving: "Saving the role...",
+  queued: "Queued. We’re getting the page into focus.",
+  running:
+    "Reading salary ranges, logos, and the fine print that usually hides in plain sight.",
+  succeeded: "Enriched. This one has shape now.",
+  failed: "Saved, but enrichment couldn’t make sense of the page.",
 };
 
 export function AddPainFlow() {
@@ -52,7 +53,8 @@ export function AddPainFlow() {
             <h2 className="text-lg font-semibold">Manual entry</h2>
             <p className="mt-1 text-sm leading-6 text-muted">
               Fill the fields yourself. Add a URL only if you want an optional
-              enrichment pass after saving.
+              enrichment pass after saving. Some things are clearer when you
+              write them down yourself.
             </p>
           </div>
           <OpportunityForm autoEnrichDefault={false} showEnrichOption />
@@ -192,7 +194,7 @@ function AutoEnrichCapture() {
         </div>
       </div>
 
-      <h1 className="text-2xl font-semibold tracking-tight">Add pain</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Add role</h1>
       <p className="mt-2 max-w-md text-sm leading-6 text-muted">
         {enrichCopy[state]}
       </p>
@@ -228,7 +230,7 @@ function AutoEnrichCapture() {
       </form>
 
       <div className="mt-6 grid w-full max-w-xl grid-cols-4 gap-2 text-left">
-        {["Save", "Queue", "Read", "Polish"].map((label, index) => (
+        {["Save", "Queue", "Read", "Shape"].map((label, index) => (
           <div
             key={label}
             className={`rounded-lg border px-3 py-2 text-xs transition ${

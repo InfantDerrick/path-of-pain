@@ -42,7 +42,7 @@ export function EnrichmentStatus({
     status === "SUCCEEDED"
       ? "Posting decoded"
       : status === "FAILED"
-        ? "Parser hit a wall"
+        ? "Parser stalled"
         : "Reading the posting";
 
   return (
@@ -59,7 +59,7 @@ export function EnrichmentStatus({
             </p>
           ) : (
             <p className="mt-1 text-sm text-muted">
-              Pulling the useful bits out of the corporate fog.
+              Reading the page for the details that matter.
             </p>
           )}
         </div>

@@ -1,6 +1,6 @@
 import type { StageSettingsInput } from "@jobtracker/domain";
 import { defaultPipelineStages } from "@jobtracker/domain";
-import { eq } from "drizzle-orm";
+import { eq, inArray, max } from "drizzle-orm";
 import { db } from "../client";
 import { createId } from "../ids";
 import { pipelineStage } from "../schema/tracking";
@@ -31,21 +31,45 @@ export async function ensurePipelineStages(userId: string) {
     .from(pipelineStage)
     .where(eq(pipelineStage.userId, userId));
 
-  if (existing.length > 0) {
+  if (existing.length === 0) {
+    const values = defaultPipelineStages.map((stage) => ({
+      id: createId("stg"),
+      userId,
+      name: stage.name,
+      slug: stage.slug,
+      orderIndex: stage.order,
+      terminalType: stage.terminalType,
+      hidden: Boolean(stage.hiddenByDefault),
+    }));
+
+    return db.insert(pipelineStage).values(values).returning();
+  }
+
+  const existingSlugs = new Set(existing.map((stage) => stage.slug));
+  const missing = defaultPipelineStages.filter(
+    (stage) => !existingSlugs.has(stage.slug),
+  );
+  if (missing.length === 0) {
     return existing;
   }
 
-  const values = defaultPipelineStages.map((stage) => ({
+  const [orderRow] = await db
+    .select({ value: max(pipelineStage.orderIndex) })
+    .from(pipelineStage)
+    .where(eq(pipelineStage.userId, userId));
+  const startOrder = (orderRow?.value ?? 0) + 1;
+  const values = missing.map((stage, index) => ({
     id: createId("stg"),
     userId,
     name: stage.name,
     slug: stage.slug,
-    orderIndex: stage.order,
+    orderIndex: startOrder + index,
     terminalType: stage.terminalType,
     hidden: Boolean(stage.hiddenByDefault),
   }));
 
-  return db.insert(pipelineStage).values(values).returning();
+  const created = await db.insert(pipelineStage).values(values).returning();
+  return [...existing, ...created];
 }
 
 export async function getVisibleStages(userId: string) {

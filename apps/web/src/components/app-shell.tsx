@@ -9,14 +9,14 @@ import type { ReactNode } from "react";
 import { LogoMark } from "@/components/brand/logo-mark";
 
 const nav = [
-  { href: "/inbox", label: "Flare-ups" },
+  { href: "/inbox", label: "Sightings" },
   { href: "/applications", label: "Trail" },
   { href: "/settings", label: "Settings" },
 ];
 
 const mobileDestinations = [
   { href: "/applications", label: "Trail", icon: Route },
-  { href: "/inbox", label: "Flare", icon: Flame },
+  { href: "/inbox", label: "Sightings", icon: Flame },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -96,12 +96,14 @@ export function AppShell({
           </Link>
           <p className="mt-3 text-xs leading-5 text-muted">
             {userLabel}
-            <span className="mt-1 block">Private misery ledger.</span>
+            <span className="mt-1 block">
+              A quiet place for a loud process.
+            </span>
           </p>
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3">
           <p className="px-3 pb-2 pt-1 text-[0.67rem] font-semibold uppercase tracking-[0.22em] text-accent">
-            Ledger
+            Private
           </p>
           {nav.map((item) => (
             <Link
@@ -136,7 +138,7 @@ export function AppShell({
                   : "border-line bg-panel-soft text-foreground hover:border-accent/70 hover:text-accent",
               )}
             >
-              <span>Add pain</span>
+              <span>Add role</span>
               <span
                 aria-hidden
                 className={cn(
@@ -152,7 +154,7 @@ export function AppShell({
           </div>
         </nav>
         <p className="px-5 pb-5 text-xs leading-5 text-muted">
-          No telemetry. No cloud therapist. Just the receipts.
+          No audience. Just what happened, kept gently.
         </p>
       </aside>
 
@@ -169,12 +171,12 @@ export function AppShell({
               </span>
             </Link>
             <span className="rounded-md border border-line bg-background/70 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted">
-              Ledger
+              Private
             </span>
           </div>
           <p className="mt-1 truncate text-xs text-muted">{userLabel}</p>
         </header>
-        <div className="flex-1 pb-28 md:pb-0">{children}</div>
+        <div className="flex-1 pb-44 md:pb-0">{children}</div>
         <Link
           href="/applications/new"
           className={cn(
@@ -183,8 +185,8 @@ export function AppShell({
               ? "border-accent/65 bg-accent/85 text-accent-foreground"
               : "border-line bg-accent/80 text-accent-foreground",
           )}
-          aria-label="Add pain"
-          title="Add pain"
+          aria-label="Add role"
+          title="Add role"
         >
           <span
             aria-hidden

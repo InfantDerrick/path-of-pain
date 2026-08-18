@@ -55,17 +55,17 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
   }
 
   return (
-    <section id="notes" className="mt-8 scroll-mt-4">
+    <section id="notes" className="mt-8 scroll-mt-28">
       <h2 className="text-sm font-medium text-muted">Notes</h2>
       <form
-        className="mt-3 rounded-2xl border border-line bg-panel p-5"
+        className="mt-3 min-w-0 rounded-lg border border-line bg-panel p-4 sm:p-5"
         onSubmit={onSubmit}
       >
         <textarea
-          className="min-h-24 w-full rounded-lg border border-line bg-background px-3 py-2 outline-none ring-accent/30 transition focus:ring-2"
+          className="min-h-28 w-full min-w-0 rounded-lg border border-line bg-background px-3 py-2 text-sm outline-none ring-accent/30 transition focus:ring-2"
           value={body}
           onChange={(event) => setBody(event.target.value)}
-          placeholder="Autosaved draft. Spill the context before memory edits the scene."
+          placeholder="Autosaved draft. Write the context before your brain starts editing it for mercy."
           required
         />
         {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
@@ -74,7 +74,7 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
           type="submit"
           disabled={pending}
         >
-          {pending ? "Saving..." : "Commit note"}
+          {pending ? "Saving..." : "Save note"}
         </button>
       </form>
       <ul className="mt-3 flex flex-col gap-3">

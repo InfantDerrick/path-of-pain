@@ -59,9 +59,9 @@ const presets: Preset[] = [
 function statusLabel(status: string) {
   const labels: Record<string, string> = {
     active: "Watching",
-    syncing: "Reading the smoke",
+    syncing: "Checking the mail",
     paused: "Paused",
-    error: "Needs attention",
+    error: "Connection stalled",
   };
   return labels[status] ?? status;
 }
@@ -125,7 +125,9 @@ export function EmailSettings({
         setError(payload?.error ?? "Could not configure this mailbox.");
         return;
       }
-      setMessage("Mailbox connected. Fresh signals are headed to Flare.");
+      setMessage(
+        "Mailbox connected. New sightings will surface when mail moves.",
+      );
       setPassword("");
       router.refresh();
     });
@@ -146,7 +148,7 @@ export function EmailSettings({
         setError(payload?.error ?? "Could not queue mailbox sync.");
         return;
       }
-      setMessage("Sync queued. Flare will twitch if anything moved.");
+      setMessage("Sync queued. Sightings will update if anything moved.");
       router.refresh();
     });
   }
@@ -302,7 +304,7 @@ export function EmailSettings({
               type="checkbox"
             />
             Use SSL/TLS. Leave this on for Gmail, iCloud, Fastmail, and most
-            sane mail hosts.
+            modern mail hosts.
           </label>
           <label className="flex items-start gap-2 text-sm text-muted">
             <input
@@ -311,7 +313,8 @@ export function EmailSettings({
               onChange={(event) => setStoreSubject(event.target.checked)}
               type="checkbox"
             />
-            Store email subjects with message refs. The full body is never kept.
+            Store email subjects with message refs. Bodies are read for a moment
+            and then left behind.
           </label>
         </div>
 
@@ -329,8 +332,8 @@ export function EmailSettings({
         <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-muted">
           <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
           Path of Pain reads recent messages only when syncing, extracts
-          deterministic signals, then discards the parsed body before writing to
-          Postgres.
+          deterministic signals, then writes metadata instead of a private
+          archive.
         </p>
       </form>
     </div>

@@ -78,7 +78,7 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
 
   async function discard() {
     const confirmed = window.confirm(
-      "Discard this job? It will leave the board, but the record can still be found directly if you have the link.",
+      "Discard this role? It leaves your main view, but the record can still be opened directly if you have the link.",
     );
     if (!confirmed) {
       return;
@@ -178,7 +178,7 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
           className="min-h-32 w-full rounded-lg border border-line bg-background px-3 py-2 outline-none ring-accent/30 transition focus:ring-2"
           value={descriptionText}
           onChange={(event) => setDescriptionText(event.target.value)}
-          placeholder="Paste the description here so it survives after the posting disappears."
+          placeholder="Paste the description here before the posting gets rewritten by optimism."
         />
       </label>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
@@ -197,7 +197,7 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
           disabled={pending || discarding}
           onClick={discard}
         >
-          {discarding ? "Discarding..." : "Discard job"}
+          {discarding ? "Discarding..." : "Discard role"}
         </button>
       </div>
     </form>
