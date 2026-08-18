@@ -61,9 +61,13 @@ test("service worker waits for the page before applying an update", async ({
   const response = await request.get("/sw.js");
   const body = await response.text();
 
-  // skipWaiting only runs on an explicit message from the client.
+  // skipWaiting only runs on an explicit message from the client, never as
+  // part of install, so an update cannot swap the app out mid-edit.
   expect(body).toContain("SKIP_WAITING");
-  expect(body).not.toMatch(/^\s*self\.skipWaiting\(\);/m);
+  const installHandler =
+    body.match(/addEventListener\("install"[\s\S]*?\n\}\);/)?.[0] ?? "";
+  expect(installHandler).not.toBe("");
+  expect(installHandler).not.toContain("skipWaiting");
 });
 
 for (const width of [375, 390]) {
