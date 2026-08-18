@@ -37,6 +37,12 @@ const RULES: RuleSet[] = [
     strong: ["schedule an interview", "next interview", "meet with"],
     medium: ["availability", "calendar", "calendly", "interview"],
     weak: ["chat", "conversation", "recruiter screen"],
+    guards: [
+      "not yet ready",
+      "not scheduled",
+      "not a rejection",
+      "cannot schedule yet",
+    ],
   },
   {
     type: "assessment",
@@ -84,7 +90,9 @@ function scoreRule(
 ): EmailAssertion {
   const haystack = `${subject} ${text}`.toLowerCase();
   const bodyOnly = text.toLowerCase();
-  const strong = phraseMatches(bodyOnly, rule.strong);
+  const strongSource =
+    rule.type === "application_received" ? haystack : bodyOnly;
+  const strong = phraseMatches(strongSource, rule.strong);
   const medium = phraseMatches(haystack, rule.medium);
   const weak = phraseMatches(haystack, rule.weak);
   const guards = phraseMatches(haystack, rule.guards ?? []);

@@ -69,4 +69,32 @@ describe("buildEmailSuggestionDrafts", () => {
     expect(draft?.proposedEvent.type).toBe("INTERVIEW_REQUESTED");
     expect(draft?.match?.opportunityId).toBe("opp_discord");
   });
+
+  it("matches application receipts from subject-only hiring mail", () => {
+    const [draft] = buildEmailSuggestionDrafts(
+      {
+        provider: "imap",
+        providerMessageId: "m_roblox",
+        from: "no-reply@roblox.com",
+        subject: "Thank you for applying to Roblox!",
+        receivedAt: new Date("2026-08-18T18:39:07.000Z"),
+        text: "We received your application.",
+      },
+      [
+        {
+          id: "opp_roblox",
+          title: "[2027] Software Engineer, Early Career",
+          companyName: "Roblox",
+          companyDomain: null,
+          sourceUrl: "https://careers.roblox.com/jobs/8072244",
+        },
+      ],
+    );
+
+    expect(draft?.assertion.type).toBe("application_received");
+    expect(draft?.match?.opportunityId).toBe("opp_roblox");
+    expect(draft?.match?.reasons.some((reason) => reason.includes("roblox"))).toBe(
+      true,
+    );
+  });
 });
