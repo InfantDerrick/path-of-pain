@@ -1,6 +1,7 @@
-import { getAllStages } from "@jobtracker/db";
+import { getAllStages, listEmailConnections } from "@jobtracker/db";
 import { APP_NAME, APP_VERSION } from "@jobtracker/shared/constants";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { EmailSettings } from "@/components/settings/email-settings";
 import { StageSettings } from "@/components/settings/stage-settings";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getSession } from "@/lib/session";
@@ -14,7 +15,10 @@ export default async function SettingsPage() {
   if (!session) {
     return null;
   }
-  const stages = await getAllStages(session.user.id);
+  const [stages, emailConnections] = await Promise.all([
+    getAllStages(session.user.id),
+    listEmailConnections(session.user.id),
+  ]);
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 py-6">
@@ -32,6 +36,14 @@ export default async function SettingsPage() {
         <div className="mt-4">
           <ThemeToggle />
         </div>
+      </section>
+      <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
+        <h2 className="font-medium">Email signals</h2>
+        <p className="mt-1 text-sm text-muted">
+          Connect IMAP with an app password. The climb gets watched, the letters
+          do not get archived.
+        </p>
+        <EmailSettings connections={emailConnections} />
       </section>
       <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
         <h2 className="font-medium">Pipeline stages</h2>

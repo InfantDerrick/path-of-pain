@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@jobtracker/domain": "workspace:*",
+    "@jobtracker/email": "workspace:*",
     "@jobtracker/job-parser": "workspace:*",
     "@jobtracker/shared": "workspace:*",
     "@jobtracker/storage": "workspace:*",

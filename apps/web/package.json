@@ -15,6 +15,7 @@
     "@jobtracker/auth": "workspace:*",
     "@jobtracker/db": "workspace:*",
     "@jobtracker/domain": "workspace:*",
+    "@jobtracker/email": "workspace:*",
     "@jobtracker/shared": "workspace:*",
     "@jobtracker/storage": "workspace:*",
     "@jobtracker/ui": "workspace:*",

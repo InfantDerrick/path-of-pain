@@ -262,6 +262,115 @@ export const opportunityEvent = pgTable(
   ],
 );
 
+export const emailConnection = pgTable(
+  "email_connection",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    label: text("label").notNull(),
+    encryptedConfig: text("encrypted_config"),
+    status: text("status").notNull().default("active"),
+    lastSyncAt: timestamp("last_sync_at", { withTimezone: true }),
+    lastError: text("last_error"),
+    syncWindowDays: integer("sync_window_days").notNull().default(30),
+    storeSubject: boolean("store_subject").notNull().default(true),
+    storeSnippets: boolean("store_snippets").notNull().default(false),
+    ...timestamps,
+  },
+  (table) => [
+    index("email_connection_user_idx").on(table.userId),
+    index("email_connection_user_status_idx").on(table.userId, table.status),
+  ],
+);
+
+export const emailMessageRef = pgTable(
+  "email_message_ref",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    connectionId: text("connection_id")
+      .notNull()
+      .references(() => emailConnection.id, { onDelete: "cascade" }),
+    provider: text("provider").notNull(),
+    providerMessageId: text("provider_message_id").notNull(),
+    threadId: text("thread_id"),
+    fromEmail: text("from_email"),
+    fromDomain: text("from_domain"),
+    subject: text("subject"),
+    subjectHash: text("subject_hash").notNull(),
+    receivedAt: timestamp("received_at", { withTimezone: true }).notNull(),
+    processedAt: timestamp("processed_at", { withTimezone: true }).notNull(),
+    metadata: jsonb("metadata")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("email_message_ref_provider_message_uidx").on(
+      table.userId,
+      table.provider,
+      table.providerMessageId,
+    ),
+    index("email_message_ref_user_received_idx").on(
+      table.userId,
+      table.receivedAt,
+    ),
+    index("email_message_ref_user_domain_idx").on(
+      table.userId,
+      table.fromDomain,
+    ),
+  ],
+);
+
+export const emailSuggestion = pgTable(
+  "email_suggestion",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    messageRefId: text("message_ref_id")
+      .notNull()
+      .references(() => emailMessageRef.id, { onDelete: "cascade" }),
+    opportunityId: text("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    confidence: integer("confidence").notNull(),
+    status: text("status").notNull().default("pending"),
+    summary: text("summary").notNull(),
+    evidence: jsonb("evidence").$type<string[]>().notNull().default([]),
+    matchReasons: jsonb("match_reasons")
+      .$type<string[]>()
+      .notNull()
+      .default([]),
+    proposedEvent: jsonb("proposed_event")
+      .$type<Record<string, unknown>>()
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("email_suggestion_user_status_idx").on(table.userId, table.status),
+    index("email_suggestion_opportunity_idx").on(table.opportunityId),
+    uniqueIndex("email_suggestion_message_type_uidx").on(
+      table.messageRefId,
+      table.type,
+      table.opportunityId,
+    ),
+  ],
+);
+
 export const note = pgTable(
   "note",
   {

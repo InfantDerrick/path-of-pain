@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
     "@jobtracker/storage",
     "@jobtracker/ui",
     "@jobtracker/domain",
+    "@jobtracker/email",
   ],
 };
 

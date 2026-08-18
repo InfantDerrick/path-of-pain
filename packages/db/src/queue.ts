@@ -2,6 +2,7 @@ import { getEnv } from "@jobtracker/shared/env";
 import PgBoss from "pg-boss";
 
 export const ENRICH_OPPORTUNITY_QUEUE = "enrich-opportunity";
+export const SYNC_EMAIL_CONNECTION_QUEUE = "sync-email-connection";
 
 let boss: PgBoss | undefined;
 let started = false;
@@ -28,9 +29,29 @@ export async function startBoss() {
       retryLimit: 2,
       retryDelay: 30,
     });
+    await instance.createQueue(SYNC_EMAIL_CONNECTION_QUEUE, {
+      name: SYNC_EMAIL_CONNECTION_QUEUE,
+      retryLimit: 2,
+      retryDelay: 60,
+    });
     queueReady = true;
   }
   return instance;
+}
+
+export async function enqueueEmailConnectionSync(input: {
+  connectionId: string;
+  userId: string;
+}) {
+  const instance = await startBoss();
+  const jobId = await instance.send(SYNC_EMAIL_CONNECTION_QUEUE, input, {
+    retryLimit: 2,
+    retryDelay: 60,
+    singletonKey: input.connectionId,
+  });
+  if (!jobId) {
+    throw new Error("pg-boss did not create an email sync job.");
+  }
 }
 
 export async function enqueueOpportunityEnrichment(input: {

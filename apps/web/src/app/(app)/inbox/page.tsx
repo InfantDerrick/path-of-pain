@@ -1,5 +1,6 @@
 import { getDashboard } from "@jobtracker/db";
 import Link from "next/link";
+import { EmailSuggestionCard } from "@/components/email/email-suggestion-card";
 import { formatRelativeTime } from "@/lib/format";
 import { getSession } from "@/lib/session";
 
@@ -38,6 +39,9 @@ export default async function InboxPage() {
         </Link>
       </section>
       <section className="mt-4 grid gap-4">
+        {dashboard.emailSuggestions.map((item) => (
+          <EmailSuggestionCard key={item.id} suggestion={item} />
+        ))}
         {dashboard.overdueTasks.map((item) => (
           <Link
             key={item.id}
