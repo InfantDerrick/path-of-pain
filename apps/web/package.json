@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "icons:generate": "node scripts/generate-icons.mjs",
     "lint": "biome check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
@@ -31,6 +32,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

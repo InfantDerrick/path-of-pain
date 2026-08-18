@@ -33,10 +33,7 @@ function scoreDomainOverlap(
   ) as string[];
 
   for (const companyDomain of companyDomains) {
-    if (
-      fromDomain &&
-      domainsRelated(fromDomain, companyDomain)
-    ) {
+    if (fromDomain && domainsRelated(fromDomain, companyDomain)) {
       score += 40;
       reasons.push(`Sender domain matches ${companyDomain}`);
       break;

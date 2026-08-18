@@ -36,6 +36,9 @@ describe("getEnv", () => {
   it("returns cached placeholders when validation is skipped", () => {
     const previous = { ...process.env };
     resetEnvCache();
+    // Placeholders are a build-time path, and it is the only mode where
+    // getEnv() will not re-read a developer's local .env over these deletes.
+    process.env.NODE_ENV = "production";
     process.env.SKIP_ENV_VALIDATION = "true";
     delete process.env.DATABASE_URL;
     delete process.env.APP_URL;

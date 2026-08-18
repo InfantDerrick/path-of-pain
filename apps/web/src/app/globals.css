@@ -48,6 +48,11 @@ html.dark {
   --font-serif: var(--font-instrument);
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background:
     radial-gradient(circle at 18% 14%, var(--paper-rule), transparent 24rem),
@@ -61,6 +66,17 @@ body {
     auto;
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+/* Installed, the app chrome should not behave like selectable page text. */
+@media (display-mode: standalone) {
+  header,
+  nav {
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 
 body::before {

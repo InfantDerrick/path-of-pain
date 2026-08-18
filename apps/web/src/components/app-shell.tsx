@@ -6,6 +6,7 @@ import { Flame, type LucideIcon, Plus, Route, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { LogoMark } from "@/components/brand/logo-mark";
 
 const nav = [
   { href: "/inbox", label: "Flare-ups" },
@@ -83,12 +84,15 @@ export function AppShell({
   return (
     <div className="flex min-h-full flex-1">
       <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-panel/90 shadow-[18px_0_60px_-42px_var(--shadow-soft)] md:flex">
-        <div className="px-5 pb-5 pt-6">
+        <div className="px-5 pb-5 pt-[calc(env(safe-area-inset-top)+1.5rem)]">
           <Link
             href="/applications"
-            className="block font-serif text-[1.7rem] leading-none tracking-tight text-foreground"
+            className="flex items-center gap-2.5 text-foreground"
           >
-            {APP_NAME}
+            <LogoMark className="size-8 shrink-0" />
+            <span className="min-w-0 truncate font-serif text-[1.45rem] leading-none tracking-tight">
+              {APP_NAME}
+            </span>
           </Link>
           <p className="mt-3 text-xs leading-5 text-muted">
             {userLabel}
@@ -153,13 +157,16 @@ export function AppShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 border-b border-line bg-panel/95 px-4 py-3 shadow-[0_18px_45px_-42px_var(--shadow-soft)] backdrop-blur md:hidden">
+        <header className="sticky top-0 z-10 border-b border-line bg-panel/95 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] shadow-[0_18px_45px_-42px_var(--shadow-soft)] backdrop-blur md:hidden">
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/applications"
-              className="min-w-0 font-serif text-[1.55rem] leading-none tracking-tight text-foreground"
+              className="flex min-w-0 items-center gap-2 text-foreground"
             >
-              {APP_NAME}
+              <LogoMark className="size-7 shrink-0" />
+              <span className="min-w-0 truncate font-serif text-[1.4rem] leading-none tracking-tight">
+                {APP_NAME}
+              </span>
             </Link>
             <span className="rounded-md border border-line bg-background/70 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted">
               Ledger

@@ -1,15 +1,43 @@
 {
+  "id": "/applications",
   "name": "Path of Pain",
-  "short_name": "Path",
-  "description": "A private, self-hosted job-search tracker with receipts.",
+  "short_name": "Path of Pain",
+  "description": "A private paper trail for the job hunt's many tiny ordeals.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/applications",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#efe6d8",
-  "theme_color": "#c2410c",
+  "theme_color": "#efe6d8",
   "categories": ["productivity", "business"],
   "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
@@ -17,16 +45,10 @@
       "purpose": "any"
     },
     {
-      "src": "/maskable-icon.svg",
+      "src": "/monochrome-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/apple-touch-icon.svg",
-      "sizes": "180x180",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "monochrome"
     }
   ],
   "shortcuts": [
@@ -35,14 +57,21 @@
       "short_name": "Add",
       "description": "Paste a job URL into the trail.",
       "url": "/applications/new",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Open trail",
       "short_name": "Trail",
       "description": "View tracked applications.",
       "url": "/applications",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Flare-ups",
+      "short_name": "Flare",
+      "description": "Review email signals that need a decision.",
+      "url": "/inbox",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

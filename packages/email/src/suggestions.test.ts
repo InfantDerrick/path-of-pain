@@ -93,8 +93,8 @@ describe("buildEmailSuggestionDrafts", () => {
 
     expect(draft?.assertion.type).toBe("application_received");
     expect(draft?.match?.opportunityId).toBe("opp_roblox");
-    expect(draft?.match?.reasons.some((reason) => reason.includes("roblox"))).toBe(
-      true,
-    );
+    expect(
+      draft?.match?.reasons.some((reason) => reason.includes("roblox")),
+    ).toBe(true);
   });
 });
