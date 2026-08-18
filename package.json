@@ -1,0 +1,30 @@
+{
+  "name": "path-of-pain",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Open-source, self-hosted, privacy-first job-search CRM",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter @jobtracker/web dev",
+    "dev:worker": "pnpm --filter @jobtracker/worker dev",
+    "build": "turbo build",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:e2e": "pnpm --filter @jobtracker/web test:e2e",
+    "db:generate": "pnpm --filter @jobtracker/db generate",
+    "db:migrate": "pnpm --filter @jobtracker/db migrate",
+    "worker:start": "pnpm --filter @jobtracker/worker start"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "turbo": "^2.10.10",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.22.0"
+}

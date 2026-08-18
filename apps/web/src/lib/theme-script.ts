@@ -1,0 +1,1 @@
+export const themeInitScript = `(function(){try{var stored=localStorage.getItem("path-of-pain-theme");var prefersDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var dark=stored==="dark"||((stored==="system"||!stored)&&prefersDark);if(dark)document.documentElement.classList.add("dark");}catch(e){}})();`;

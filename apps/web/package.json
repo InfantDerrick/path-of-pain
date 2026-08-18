@@ -1,0 +1,35 @@
+{
+  "name": "@jobtracker/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@jobtracker/auth": "workspace:*",
+    "@jobtracker/db": "workspace:*",
+    "@jobtracker/domain": "workspace:*",
+    "@jobtracker/shared": "workspace:*",
+    "@jobtracker/ui": "workspace:*",
+    "better-auth": "^1.6.30",
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

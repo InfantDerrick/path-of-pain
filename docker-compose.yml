@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: jobtracker
+      POSTGRES_PASSWORD: jobtracker
+      POSTGRES_DB: jobtracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobtracker -d jobtracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://jobtracker:jobtracker@db:5432/jobtracker
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      AUTH_SECRET: ${AUTH_SECRET:-replace-with-a-long-random-secret}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-replace-with-a-long-random-secret}
+      REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-auto}
+      STORAGE_DRIVER: local
+      STORAGE_PATH: /data
+      AI_PROVIDER: disabled
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      MIGRATIONS_FOLDER: /app/packages/db/drizzle
+    volumes:
+      - jobtracker_data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  jobtracker_data:
