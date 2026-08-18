@@ -19,6 +19,7 @@
     "@jobtracker/domain": "workspace:*",
     "@jobtracker/job-parser": "workspace:*",
     "@jobtracker/shared": "workspace:*",
+    "@jobtracker/storage": "workspace:*",
     "drizzle-orm": "^0.45.2",
     "pg-boss": "^10.3.2",
     "postgres": "^3.4.7"

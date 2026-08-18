@@ -30,6 +30,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/packages/db ./packages/db
 COPY --from=builder --chown=nextjs:nodejs /app/packages/domain ./packages/domain
 COPY --from=builder --chown=nextjs:nodejs /app/packages/job-parser ./packages/job-parser
 COPY --from=builder --chown=nextjs:nodejs /app/packages/shared ./packages/shared
+COPY --from=builder --chown=nextjs:nodejs /app/packages/storage ./packages/storage
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 USER nextjs
 EXPOSE 3000

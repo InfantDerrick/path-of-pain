@@ -47,6 +47,8 @@ export function normalizeExtractedJob(job: ExtractedJob): ExtractedJob {
       normalizeWorkplace(`${job.location ?? ""} ${descriptionText ?? ""}`),
     descriptionHtml,
     descriptionText,
+    snapshotHtml: job.snapshotHtml,
+    snapshotContentType: cleanText(job.snapshotContentType),
     externalJobId: cleanText(job.externalJobId),
     employmentType: cleanText(job.employmentType),
     salaryCurrency: cleanText(job.salaryCurrency),

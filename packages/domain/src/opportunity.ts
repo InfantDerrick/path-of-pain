@@ -34,6 +34,9 @@ export const eventTypes = [
   "TASK_COMPLETED",
   "TASK_REOPENED",
   "DOCUMENT_ADDED",
+  "CONTACT_ADDED",
+  "ATTACHMENT_ADDED",
+  "SNAPSHOT_CAPTURED",
   "JOB_ENRICHED",
   "JOB_ENRICHMENT_FAILED",
 ] as const;
@@ -58,3 +61,12 @@ export const workplaceTypes = [
 ] as const;
 
 export type WorkplaceType = (typeof workplaceTypes)[number];
+
+export const attachmentKinds = [
+  "resume",
+  "recruiter_doc",
+  "offer_doc",
+  "other",
+] as const;
+
+export type AttachmentKind = (typeof attachmentKinds)[number];

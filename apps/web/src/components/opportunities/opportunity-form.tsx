@@ -29,6 +29,7 @@ export function OpportunityForm({
   const [error, setError] = useState<string | null>(null);
   const [existingId, setExistingId] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [clipboardMessage, setClipboardMessage] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,6 +69,20 @@ export function OpportunityForm({
 
     router.push(`/applications/${payload.id}`);
     router.refresh();
+  }
+
+  async function pasteJobUrl() {
+    if (!navigator.clipboard?.readText) {
+      setClipboardMessage("Clipboard paste is blocked here.");
+      return;
+    }
+    try {
+      const text = await navigator.clipboard.readText();
+      setSourceUrl(text.trim());
+      setClipboardMessage("Pasted.");
+    } catch {
+      setClipboardMessage("Clipboard paste is blocked here.");
+    }
   }
 
   return (
@@ -130,13 +145,25 @@ export function OpportunityForm({
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="font-medium">Job URL</span>
-        <input
-          className={fieldClass}
-          type="url"
-          value={sourceUrl}
-          onChange={(event) => setSourceUrl(event.target.value)}
-          placeholder="https://..."
-        />
+        <span className="flex gap-2">
+          <input
+            className={fieldClass}
+            type="url"
+            value={sourceUrl}
+            onChange={(event) => setSourceUrl(event.target.value)}
+            placeholder="https://..."
+          />
+          <button
+            className="h-11 rounded-lg border border-line px-3 text-sm text-muted"
+            type="button"
+            onClick={() => void pasteJobUrl()}
+          >
+            Paste
+          </button>
+        </span>
+        {clipboardMessage ? (
+          <span className="text-xs text-muted">{clipboardMessage}</span>
+        ) : null}
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
         <span className="font-medium">Notes</span>

@@ -68,6 +68,9 @@ function AutoEnrichCapture() {
   const [opportunityId, setOpportunityId] = useState<string | null>(null);
   const [state, setState] = useState<EnrichState>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [clipboardState, setClipboardState] = useState<
+    "idle" | "reading" | "unavailable"
+  >("idle");
 
   const step = useMemo(() => {
     if (state === "idle") {
@@ -162,6 +165,22 @@ function AutoEnrichCapture() {
     setState(payload.enrichmentStatus === "RUNNING" ? "running" : "queued");
   }
 
+  async function pasteFromClipboard() {
+    if (!navigator.clipboard?.readText) {
+      setClipboardState("unavailable");
+      return;
+    }
+    setClipboardState("reading");
+    setError(null);
+    try {
+      const text = await navigator.clipboard.readText();
+      setSourceUrl(text.trim());
+      setClipboardState("idle");
+    } catch {
+      setClipboardState("unavailable");
+    }
+  }
+
   return (
     <section className="mx-auto mt-10 flex min-h-[28rem] max-w-2xl flex-col items-center justify-center text-center">
       <div className="relative mb-7 size-32">
@@ -178,16 +197,27 @@ function AutoEnrichCapture() {
         {enrichCopy[state]}
       </p>
 
-      <form className="mt-7 flex w-full max-w-xl gap-2" onSubmit={onSubmit}>
+      <form
+        className="mt-7 grid w-full max-w-xl gap-2 sm:grid-cols-[1fr_auto_auto]"
+        onSubmit={onSubmit}
+      >
         <input
           aria-label="Job URL"
-          className="h-12 min-w-0 flex-1 rounded-lg border border-line bg-panel px-4 text-sm outline-none ring-accent/30 transition focus:ring-2"
+          className="h-12 min-w-0 rounded-lg border border-line bg-panel px-4 text-sm outline-none ring-accent/30 transition focus:ring-2"
           type="url"
           value={sourceUrl}
           disabled={state !== "idle"}
           onChange={(event) => setSourceUrl(event.target.value)}
           placeholder="https://company.example/jobs/role"
         />
+        <button
+          className="h-12 rounded-lg border border-line bg-panel px-4 text-sm font-medium text-muted transition hover:text-foreground disabled:opacity-60"
+          type="button"
+          disabled={state !== "idle" || clipboardState === "reading"}
+          onClick={() => void pasteFromClipboard()}
+        >
+          {clipboardState === "reading" ? "Reading" : "Paste"}
+        </button>
         <button
           className="h-12 rounded-lg bg-accent px-5 text-sm font-medium text-accent-foreground disabled:opacity-60"
           type="submit"
@@ -222,6 +252,11 @@ function AutoEnrichCapture() {
         >
           Open saved role
         </a>
+      ) : null}
+      {clipboardState === "unavailable" ? (
+        <p className="mt-4 text-sm text-muted">
+          Clipboard paste is blocked here. Long-press paste still works.
+        </p>
       ) : null}
       {error ? <p className="mt-4 text-sm text-danger">{error}</p> : null}
     </section>

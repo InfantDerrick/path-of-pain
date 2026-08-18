@@ -47,6 +47,8 @@ export async function extractJobFromUrl(value: string): Promise<ExtractedJob> {
     return {
       ...normalizedFirstPass,
       method: normalizedFirstPass.method ?? adapter?.id ?? "static-html",
+      snapshotHtml: html,
+      snapshotContentType: "text/html; charset=utf-8",
     };
   }
 
@@ -55,11 +57,15 @@ export async function extractJobFromUrl(value: string): Promise<ExtractedJob> {
     return normalizeExtractedJob({
       ...parseHtml(rendered, url),
       method: "playwright",
+      snapshotHtml: rendered,
+      snapshotContentType: "text/html; charset=utf-8",
     });
   } catch {
     return {
       ...normalizedFirstPass,
       method: normalizedFirstPass.method ?? adapter?.id ?? "static-html",
+      snapshotHtml: html,
+      snapshotContentType: "text/html; charset=utf-8",
     };
   }
 }

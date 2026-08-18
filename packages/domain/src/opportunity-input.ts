@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { captureSources, workplaceTypes } from "./opportunity";
+import { attachmentKinds, captureSources, workplaceTypes } from "./opportunity";
 
 const optionalText = z
   .string()
@@ -78,6 +78,21 @@ export const createInterviewInput = z.object({
   notes: z.string().trim().max(5000).optional(),
 });
 
+export const createContactInput = z.object({
+  name: z.string().trim().min(1).max(200),
+  role: z.string().trim().max(200).optional(),
+  email: z.string().trim().email().max(320).optional().or(z.literal("")),
+  phone: z.string().trim().max(80).optional(),
+  url: z.string().trim().url().max(2000).optional().or(z.literal("")),
+  notes: z.string().trim().max(5000).optional(),
+  relationship: z.string().trim().max(120).optional(),
+});
+
+export const createAttachmentMetadataInput = z.object({
+  kind: z.enum(attachmentKinds).default("other"),
+  notes: z.string().trim().max(5000).optional(),
+});
+
 export const stageSettingsInput = z.object({
   stages: z
     .array(
@@ -98,4 +113,8 @@ export type MoveStageInput = z.infer<typeof moveStageInput>;
 export type CreateTaskInput = z.infer<typeof createTaskInput>;
 export type UpdateTaskInput = z.infer<typeof updateTaskInput>;
 export type CreateInterviewInput = z.infer<typeof createInterviewInput>;
+export type CreateContactInput = z.infer<typeof createContactInput>;
+export type CreateAttachmentMetadataInput = z.infer<
+  typeof createAttachmentMetadataInput
+>;
 export type StageSettingsInput = z.infer<typeof stageSettingsInput>;

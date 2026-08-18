@@ -2,6 +2,8 @@ import { getOpportunityDetail, getVisibleStages } from "@jobtracker/db";
 import { notFound } from "next/navigation";
 import { CompanyIcon } from "@/components/opportunities/company-icon";
 import { EnrichmentStatus } from "@/components/opportunities/enrichment-status";
+import { EvidencePanel } from "@/components/opportunities/evidence-panel";
+import { MobileDetailActions } from "@/components/opportunities/mobile-detail-actions";
 import { NotesPanel } from "@/components/opportunities/notes-panel";
 import { OpportunityEditor } from "@/components/opportunities/opportunity-editor";
 import { ProcessPanel } from "@/components/opportunities/process-panel";
@@ -32,8 +34,8 @@ export default async function OpportunityDetailPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-6">
-      <div className="flex min-w-0 items-start gap-4">
+    <main className="mx-auto w-full max-w-4xl px-4 py-6">
+      <div className="flex min-w-0 items-start gap-4 border-b border-line pb-5">
         <CompanyIcon
           src={detail.companyLogoUrl}
           name={detail.companyName}
@@ -58,12 +60,29 @@ export default async function OpportunityDetailPage({
       <div className="mt-6">
         <OpportunityEditor opportunity={detail} />
       </div>
-      <ProcessPanel
+      <div id="stage" className="scroll-mt-4">
+        <ProcessPanel
+          opportunityId={detail.id}
+          stageId={detail.stageId}
+          stages={stages}
+          tasks={detail.tasks}
+          interviews={detail.interviews}
+        />
+      </div>
+      <EvidencePanel
         opportunityId={detail.id}
-        stageId={detail.stageId}
-        stages={stages}
-        tasks={detail.tasks}
-        interviews={detail.interviews}
+        snapshots={detail.snapshots.map((item) => ({
+          ...item,
+          capturedAt: item.capturedAt.toISOString(),
+        }))}
+        contacts={detail.contacts.map((item) => ({
+          ...item,
+          createdAt: item.createdAt.toISOString(),
+        }))}
+        attachments={detail.attachments.map((item) => ({
+          ...item,
+          createdAt: item.createdAt.toISOString(),
+        }))}
       />
       <NotesPanel
         opportunityId={detail.id}
@@ -73,7 +92,7 @@ export default async function OpportunityDetailPage({
           createdAt: item.createdAt.toISOString(),
         }))}
       />
-      <section className="mt-8">
+      <section id="timeline" className="mt-8 scroll-mt-4">
         <h2 className="text-sm font-medium text-muted">Timeline</h2>
         <ol className="mt-3 flex flex-col gap-3">
           {detail.events.map((event) => (
@@ -91,6 +110,7 @@ export default async function OpportunityDetailPage({
           ))}
         </ol>
       </section>
+      <MobileDetailActions />
     </main>
   );
 }

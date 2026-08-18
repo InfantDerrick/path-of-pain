@@ -1,4 +1,6 @@
 export {
+  type AttachmentKind,
+  attachmentKinds,
   type CaptureSource,
   captureSources,
   type EventType,
@@ -10,10 +12,14 @@ export {
   workplaceTypes,
 } from "./opportunity";
 export {
+  type CreateAttachmentMetadataInput,
+  type CreateContactInput,
   type CreateInterviewInput,
   type CreateNoteInput,
   type CreateOpportunityInput,
   type CreateTaskInput,
+  createAttachmentMetadataInput,
+  createContactInput,
   createInterviewInput,
   createNoteInput,
   createOpportunityInput,

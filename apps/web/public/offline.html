@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline · Path of Pain</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --background: #efe6d8;
+        --foreground: #1a1612;
+        --panel: #fffcf7;
+        --line: #ddd2c4;
+        --muted: #6b6158;
+        --accent: #c2410c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: #161310;
+          --foreground: #f3ece3;
+          --panel: #221e1a;
+          --line: #3a332c;
+          --muted: #b4a89c;
+          --accent: #ea580c;
+        }
+      }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(rgba(194, 65, 12, 0.07) 1px, transparent 1px),
+          radial-gradient(circle, rgba(94, 63, 36, 0.08) 0 1px, transparent 1.5px),
+          var(--background);
+        background-size: 100% 34px, 18px 18px, auto;
+        color: var(--foreground);
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      main {
+        width: min(28rem, calc(100vw - 2rem));
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 1.25rem;
+      }
+      p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      a {
+        color: var(--accent);
+        font-weight: 650;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Offline</h1>
+      <p>
+        The trail is still here, but the private records stay uncached. Reconnect
+        to read or change applications.
+      </p>
+      <a href="/applications">Try the trail again</a>
+    </main>
+  </body>
+</html>

@@ -2,14 +2,18 @@ export { type Database, db, schema, sql } from "./client";
 export { createId } from "./ids";
 export { getDashboard } from "./queries/dashboard";
 export {
+  addAttachment,
   addInterview,
   addNote,
+  addOpportunityContact,
   addTask,
   createOpportunity,
-  discardOpportunity,
   DuplicateOpportunityError,
+  discardOpportunity,
   enrichOpportunityFromExtraction,
+  getAttachmentDownload,
   getOpportunityDetail,
+  getSnapshotDownload,
   listOpportunities,
   listPendingEnrichmentTargets,
   markOpportunityEnrichmentFailed,

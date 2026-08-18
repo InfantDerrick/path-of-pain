@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
     "@jobtracker/auth",
     "@jobtracker/db",
     "@jobtracker/shared",
+    "@jobtracker/storage",
     "@jobtracker/ui",
     "@jobtracker/domain",
   ],

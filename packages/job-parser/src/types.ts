@@ -17,6 +17,8 @@ export type ExtractedJob = {
   salaryCurrency?: string;
   descriptionHtml?: string;
   descriptionText?: string;
+  snapshotHtml?: string;
+  snapshotContentType?: string;
   externalJobId?: string;
   employmentType?: string;
   confidence: Record<string, number>;

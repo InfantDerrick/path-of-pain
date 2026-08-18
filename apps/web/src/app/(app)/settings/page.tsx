@@ -36,14 +36,15 @@ export default async function SettingsPage() {
       <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
         <h2 className="font-medium">Pipeline stages</h2>
         <p className="mt-1 text-sm text-muted">
-          Rename, reorder, or hide the trail markers. The history stays put.
+          Rename, reorder, or hide the trail markers. Let's hope we don't stay
+          in Team Matching forever.
         </p>
         <StageSettings stages={stages} />
       </section>
       <section className="mt-4 rounded-2xl border border-line bg-panel p-5">
         <h2 className="font-medium">Session</h2>
         <p className="mt-1 text-sm text-muted">
-          Signing out stays on this instance. Nothing is sent anywhere else.
+          Signing out stays on this instance.
         </p>
         <div className="mt-4">
           <SignOutButton />

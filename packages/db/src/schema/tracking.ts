@@ -126,6 +126,109 @@ export const jobPosting = pgTable("job_posting", {
   ...timestamps,
 });
 
+export const postingSnapshot = pgTable(
+  "posting_snapshot",
+  {
+    id: text("id").primaryKey(),
+    opportunityId: text("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    storageKey: text("storage_key").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(),
+    hash: text("hash").notNull(),
+    capturedAt: timestamp("captured_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    ...timestamps,
+  },
+  (table) => [
+    index("posting_snapshot_opportunity_idx").on(table.opportunityId),
+    index("posting_snapshot_user_captured_idx").on(
+      table.userId,
+      table.capturedAt,
+    ),
+  ],
+);
+
+export const contact = pgTable(
+  "contact",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    companyId: text("company_id")
+      .notNull()
+      .references(() => company.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    role: text("role"),
+    email: text("email"),
+    phone: text("phone"),
+    url: text("url"),
+    notes: text("notes"),
+    ...timestamps,
+  },
+  (table) => [
+    index("contact_user_company_idx").on(table.userId, table.companyId),
+    uniqueIndex("contact_user_company_email_uidx")
+      .on(table.userId, table.companyId, table.email)
+      .where(sql`${table.email} is not null`),
+  ],
+);
+
+export const opportunityContact = pgTable(
+  "opportunity_contact",
+  {
+    id: text("id").primaryKey(),
+    opportunityId: text("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    contactId: text("contact_id")
+      .notNull()
+      .references(() => contact.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    relationship: text("relationship"),
+    ...timestamps,
+  },
+  (table) => [
+    index("opportunity_contact_opportunity_idx").on(table.opportunityId),
+    uniqueIndex("opportunity_contact_pair_uidx").on(
+      table.opportunityId,
+      table.contactId,
+    ),
+  ],
+);
+
+export const attachment = pgTable(
+  "attachment",
+  {
+    id: text("id").primaryKey(),
+    opportunityId: text("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    storageKey: text("storage_key").notNull(),
+    filename: text("filename").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(),
+    kind: text("kind").notNull().default("other"),
+    notes: text("notes"),
+    ...timestamps,
+  },
+  (table) => [
+    index("attachment_opportunity_idx").on(table.opportunityId),
+    index("attachment_user_created_idx").on(table.userId, table.createdAt),
+  ],
+);
+
 export const opportunityEvent = pgTable(
   "opportunity_event",
   {

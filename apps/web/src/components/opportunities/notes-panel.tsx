@@ -55,7 +55,7 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
   }
 
   return (
-    <section className="mt-8">
+    <section id="notes" className="mt-8 scroll-mt-4">
       <h2 className="text-sm font-medium text-muted">Notes</h2>
       <form
         className="mt-3 rounded-2xl border border-line bg-panel p-5"

@@ -1,4 +1,6 @@
 import {
+  type CreateAttachmentMetadataInput,
+  type CreateContactInput,
   type CreateInterviewInput,
   type CreateNoteInput,
   type CreateOpportunityInput,
@@ -9,6 +11,12 @@ import {
   type UpdateTaskInput,
 } from "@jobtracker/domain";
 import type { ExtractedJob } from "@jobtracker/job-parser";
+import {
+  getStorage,
+  sanitizeFilename,
+  sha256Hex,
+  storageKey,
+} from "@jobtracker/storage";
 import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { db } from "../client";
 import {
@@ -18,16 +26,22 @@ import {
 } from "../enrichment-merge";
 import { createId } from "../ids";
 import {
+  attachment,
   company,
+  contact,
   interview,
   jobPosting,
   note,
   opportunity,
+  opportunityContact,
   opportunityEvent,
   pipelineStage,
+  postingSnapshot,
   task,
 } from "../schema/tracking";
 import { getStageBySlug } from "./pipeline";
+
+const MAX_SNAPSHOT_BYTES = 3 * 1024 * 1024;
 
 export class DuplicateOpportunityError extends Error {
   readonly code = "DUPLICATE_OPPORTUNITY" as const;
@@ -139,6 +153,46 @@ async function recordEvent(input: {
     source: input.source,
     metadata: input.metadata ?? {},
   });
+}
+
+async function storePostingSnapshot(input: {
+  opportunityId: string;
+  userId: string;
+  html: string | undefined;
+  contentType: string | undefined;
+}) {
+  const html = input.html?.trim();
+  if (!html) {
+    return null;
+  }
+
+  const body = new TextEncoder().encode(html);
+  if (body.byteLength > MAX_SNAPSHOT_BYTES) {
+    return null;
+  }
+  const hash = sha256Hex(body);
+  const capturedAt = new Date();
+  const key = storageKey([
+    "snapshots",
+    input.userId,
+    input.opportunityId,
+    `${capturedAt.toISOString()}-${hash.slice(0, 10)}.html`,
+  ]);
+  const stored = await getStorage().put(key, body, {
+    filename: "posting-snapshot.html",
+    contentType: input.contentType ?? "text/html; charset=utf-8",
+  });
+
+  return {
+    id: createId("snap"),
+    opportunityId: input.opportunityId,
+    userId: input.userId,
+    storageKey: stored.key,
+    contentType: stored.contentType,
+    size: stored.size,
+    hash,
+    capturedAt,
+  };
 }
 
 function mappedStageEvent(slug: string, terminalType: string | null) {
@@ -359,6 +413,12 @@ export async function enrichOpportunityFromExtraction(input: {
   const logoUrl = canReplaceLogo
     ? extracted.companyLogoUrl
     : (existing.companyLogoUrl ?? faviconFromUrl(existing.sourceUrl));
+  const snapshot = await storePostingSnapshot({
+    opportunityId: input.opportunityId,
+    userId: input.userId,
+    html: extracted.snapshotHtml,
+    contentType: extracted.snapshotContentType,
+  });
 
   await db.transaction(async (tx) => {
     await tx
@@ -420,6 +480,23 @@ export async function enrichOpportunityFromExtraction(input: {
         confidence: extracted.confidence,
       },
     });
+
+    if (snapshot) {
+      await tx.insert(postingSnapshot).values(snapshot);
+      await tx.insert(opportunityEvent).values({
+        id: createId("evt"),
+        opportunityId: input.opportunityId,
+        userId: input.userId,
+        type: "SNAPSHOT_CAPTURED",
+        source: "worker",
+        sourceReference: existing.sourceUrl,
+        metadata: {
+          contentType: snapshot.contentType,
+          size: snapshot.size,
+          hash: snapshot.hash,
+        },
+      });
+    }
   });
 }
 
@@ -566,30 +643,80 @@ export async function getOpportunityDetail(
     return null;
   }
 
-  const [notes, events, tasks, interviews] = await Promise.all([
-    db
-      .select()
-      .from(note)
-      .where(eq(note.opportunityId, opportunityId))
-      .orderBy(desc(note.updatedAt)),
-    db
-      .select()
-      .from(opportunityEvent)
-      .where(eq(opportunityEvent.opportunityId, opportunityId))
-      .orderBy(desc(opportunityEvent.occurredAt)),
-    db
-      .select()
-      .from(task)
-      .where(eq(task.opportunityId, opportunityId))
-      .orderBy(desc(task.createdAt)),
-    db
-      .select()
-      .from(interview)
-      .where(eq(interview.opportunityId, opportunityId))
-      .orderBy(desc(interview.scheduledAt)),
-  ]);
+  const [notes, events, tasks, interviews, snapshots, contacts, attachments] =
+    await Promise.all([
+      db
+        .select()
+        .from(note)
+        .where(eq(note.opportunityId, opportunityId))
+        .orderBy(desc(note.updatedAt)),
+      db
+        .select()
+        .from(opportunityEvent)
+        .where(eq(opportunityEvent.opportunityId, opportunityId))
+        .orderBy(desc(opportunityEvent.occurredAt)),
+      db
+        .select()
+        .from(task)
+        .where(eq(task.opportunityId, opportunityId))
+        .orderBy(desc(task.createdAt)),
+      db
+        .select()
+        .from(interview)
+        .where(eq(interview.opportunityId, opportunityId))
+        .orderBy(desc(interview.scheduledAt)),
+      db
+        .select({
+          id: postingSnapshot.id,
+          contentType: postingSnapshot.contentType,
+          size: postingSnapshot.size,
+          hash: postingSnapshot.hash,
+          capturedAt: postingSnapshot.capturedAt,
+        })
+        .from(postingSnapshot)
+        .where(eq(postingSnapshot.opportunityId, opportunityId))
+        .orderBy(desc(postingSnapshot.capturedAt)),
+      db
+        .select({
+          id: contact.id,
+          name: contact.name,
+          role: contact.role,
+          email: contact.email,
+          phone: contact.phone,
+          url: contact.url,
+          notes: contact.notes,
+          relationship: opportunityContact.relationship,
+          createdAt: opportunityContact.createdAt,
+        })
+        .from(opportunityContact)
+        .innerJoin(contact, eq(contact.id, opportunityContact.contactId))
+        .where(eq(opportunityContact.opportunityId, opportunityId))
+        .orderBy(desc(opportunityContact.createdAt)),
+      db
+        .select({
+          id: attachment.id,
+          filename: attachment.filename,
+          contentType: attachment.contentType,
+          size: attachment.size,
+          kind: attachment.kind,
+          notes: attachment.notes,
+          createdAt: attachment.createdAt,
+        })
+        .from(attachment)
+        .where(eq(attachment.opportunityId, opportunityId))
+        .orderBy(desc(attachment.createdAt)),
+    ]);
 
-  return { ...row, notes, events, tasks, interviews };
+  return {
+    ...row,
+    notes,
+    events,
+    tasks,
+    interviews,
+    snapshots,
+    contacts,
+    attachments,
+  };
 }
 
 export async function moveOpportunityStage(
@@ -906,4 +1033,212 @@ export async function addInterview(
       .where(eq(opportunity.id, opportunityId));
   });
   return getOpportunityDetail(userId, opportunityId);
+}
+
+export async function addOpportunityContact(
+  userId: string,
+  opportunityId: string,
+  input: CreateContactInput,
+) {
+  const existing = await getOpportunityDetail(userId, opportunityId);
+  if (!existing) {
+    throw new OpportunityNotFoundError();
+  }
+
+  const now = new Date();
+  const email = emptyToNull(input.email);
+  const url = emptyToNull(input.url);
+  const role = emptyToNull(input.role);
+  const phone = emptyToNull(input.phone);
+  const notes = emptyToNull(input.notes);
+  const relationship = emptyToNull(input.relationship);
+
+  const [reusable] = email
+    ? await db
+        .select()
+        .from(contact)
+        .where(
+          and(
+            eq(contact.userId, userId),
+            eq(contact.companyId, existing.companyId),
+            eq(contact.email, email),
+          ),
+        )
+        .limit(1)
+    : [];
+
+  const contactId = reusable?.id ?? createId("ctc");
+  await db.transaction(async (tx) => {
+    if (reusable) {
+      await tx
+        .update(contact)
+        .set({
+          name: input.name,
+          role: role ?? reusable.role,
+          phone: phone ?? reusable.phone,
+          url: url ?? reusable.url,
+          notes: notes ?? reusable.notes,
+          updatedAt: now,
+        })
+        .where(eq(contact.id, reusable.id));
+    } else {
+      await tx.insert(contact).values({
+        id: contactId,
+        userId,
+        companyId: existing.companyId,
+        name: input.name,
+        role,
+        email,
+        phone,
+        url,
+        notes,
+      });
+    }
+
+    await tx
+      .insert(opportunityContact)
+      .values({
+        id: createId("oc"),
+        opportunityId,
+        contactId,
+        userId,
+        relationship,
+      })
+      .onConflictDoUpdate({
+        target: [
+          opportunityContact.opportunityId,
+          opportunityContact.contactId,
+        ],
+        set: { relationship, updatedAt: now },
+      });
+
+    await tx.insert(opportunityEvent).values({
+      id: createId("evt"),
+      opportunityId,
+      userId,
+      type: "CONTACT_ADDED",
+      source: "web",
+      metadata: {
+        name: input.name,
+        role,
+        relationship,
+      },
+    });
+
+    await tx
+      .update(opportunity)
+      .set({ lastActivityAt: now, updatedAt: now })
+      .where(eq(opportunity.id, opportunityId));
+  });
+
+  return getOpportunityDetail(userId, opportunityId);
+}
+
+export async function addAttachment(input: {
+  userId: string;
+  opportunityId: string;
+  file: Uint8Array;
+  filename: string;
+  contentType: string;
+  metadata: CreateAttachmentMetadataInput;
+}) {
+  const existing = await getOpportunityDetail(
+    input.userId,
+    input.opportunityId,
+  );
+  if (!existing) {
+    throw new OpportunityNotFoundError();
+  }
+
+  const now = new Date();
+  const id = createId("att");
+  const filename = sanitizeFilename(input.filename);
+  const key = storageKey([
+    "attachments",
+    input.userId,
+    input.opportunityId,
+    `${id}-${filename}`,
+  ]);
+  const stored = await getStorage().put(key, input.file, {
+    filename,
+    contentType: input.contentType || "application/octet-stream",
+  });
+  const notes = emptyToNull(input.metadata.notes);
+
+  await db.transaction(async (tx) => {
+    await tx.insert(attachment).values({
+      id,
+      opportunityId: input.opportunityId,
+      userId: input.userId,
+      storageKey: stored.key,
+      filename: stored.filename,
+      contentType: stored.contentType,
+      size: stored.size,
+      kind: input.metadata.kind,
+      notes,
+    });
+    await tx.insert(opportunityEvent).values({
+      id: createId("evt"),
+      opportunityId: input.opportunityId,
+      userId: input.userId,
+      type: "ATTACHMENT_ADDED",
+      source: "web",
+      metadata: {
+        filename: stored.filename,
+        contentType: stored.contentType,
+        size: stored.size,
+        kind: input.metadata.kind,
+      },
+    });
+    await tx
+      .update(opportunity)
+      .set({ lastActivityAt: now, updatedAt: now })
+      .where(eq(opportunity.id, input.opportunityId));
+  });
+
+  return getOpportunityDetail(input.userId, input.opportunityId);
+}
+
+export async function getAttachmentDownload(
+  userId: string,
+  opportunityId: string,
+  attachmentId: string,
+) {
+  const [row] = await db
+    .select()
+    .from(attachment)
+    .where(
+      and(
+        eq(attachment.id, attachmentId),
+        eq(attachment.opportunityId, opportunityId),
+        eq(attachment.userId, userId),
+      ),
+    )
+    .limit(1);
+  if (!row) {
+    throw new OpportunityNotFoundError();
+  }
+  return { ...row, body: await getStorage().get(row.storageKey) };
+}
+
+export async function getSnapshotDownload(
+  userId: string,
+  opportunityId: string,
+  snapshotId: string,
+) {
+  const [row] = await db
+    .select()
+    .from(postingSnapshot)
+    .where(
+      and(
+        eq(postingSnapshot.id, snapshotId),
+        eq(postingSnapshot.opportunityId, opportunityId),
+        eq(postingSnapshot.userId, userId),
+      ),
+    )
+    .limit(1);
+  if (!row) {
+    throw new OpportunityNotFoundError();
+  }
+  return { ...row, body: await getStorage().get(row.storageKey) };
 }
