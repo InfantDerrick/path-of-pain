@@ -121,6 +121,8 @@ export const jobPosting = pgTable("job_posting", {
   sourceType: text("source_type"),
   enrichmentStatus: text("enrichment_status").notNull().default("IDLE"),
   enrichmentError: text("enrichment_error"),
+  parserVersion: text("parser_version"),
+  parserMethod: text("parser_method"),
   ...timestamps,
 });
 
@@ -192,5 +194,29 @@ export const task = pgTable(
   (table) => [
     index("task_user_due_idx").on(table.userId, table.dueAt),
     index("task_opportunity_idx").on(table.opportunityId),
+  ],
+);
+
+export const interview = pgTable(
+  "interview",
+  {
+    id: text("id").primaryKey(),
+    opportunityId: text("opportunity_id")
+      .notNull()
+      .references(() => opportunity.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    type: text("type").notNull().default("interview"),
+    round: text("round"),
+    interviewer: text("interviewer"),
+    meetingUrl: text("meeting_url"),
+    notes: text("notes"),
+    ...timestamps,
+  },
+  (table) => [
+    index("interview_user_scheduled_idx").on(table.userId, table.scheduledAt),
+    index("interview_opportunity_idx").on(table.opportunityId),
   ],
 );

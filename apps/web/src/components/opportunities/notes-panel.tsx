@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { formatRelativeTime } from "@/lib/format";
 
 type NotesPanelProps = {
@@ -14,6 +14,22 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const draftKey = `path-of-pain-note-draft:${opportunityId}`;
+
+  useEffect(() => {
+    setBody(localStorage.getItem(draftKey) ?? "");
+  }, [draftKey]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (body) {
+        localStorage.setItem(draftKey, body);
+      } else {
+        localStorage.removeItem(draftKey);
+      }
+    }, 350);
+    return () => clearTimeout(timeout);
+  }, [body, draftKey]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,6 +50,7 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
     }
 
     setBody("");
+    localStorage.removeItem(draftKey);
     router.refresh();
   }
 
@@ -48,7 +65,7 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
           className="min-h-24 w-full rounded-lg border border-line bg-background px-3 py-2 outline-none ring-accent/30 transition focus:ring-2"
           value={body}
           onChange={(event) => setBody(event.target.value)}
-          placeholder="Add context while it is still in your head."
+          placeholder="Autosaved draft. Spill the context before memory edits the scene."
           required
         />
         {error ? <p className="mt-2 text-sm text-danger">{error}</p> : null}
@@ -57,7 +74,7 @@ export function NotesPanel({ opportunityId, notes }: NotesPanelProps) {
           type="submit"
           disabled={pending}
         >
-          {pending ? "Saving…" : "Add note"}
+          {pending ? "Saving..." : "Commit note"}
         </button>
       </form>
       <ul className="mt-3 flex flex-col gap-3">

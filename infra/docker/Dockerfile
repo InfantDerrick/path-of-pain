@@ -25,7 +25,12 @@ RUN groupadd --system --gid 1001 nodejs && useradd --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/packages/db/drizzle ./packages/db/drizzle
+COPY --from=builder --chown=nextjs:nodejs /app/apps/worker ./apps/worker
+COPY --from=builder --chown=nextjs:nodejs /app/packages/db ./packages/db
+COPY --from=builder --chown=nextjs:nodejs /app/packages/domain ./packages/domain
+COPY --from=builder --chown=nextjs:nodejs /app/packages/job-parser ./packages/job-parser
+COPY --from=builder --chown=nextjs:nodejs /app/packages/shared ./packages/shared
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 USER nextjs
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=8 \

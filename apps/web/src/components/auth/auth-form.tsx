@@ -99,7 +99,7 @@ export function AuthForm({ registrationEnabled }: AuthFormProps) {
         type="submit"
         disabled={pending}
       >
-        {pending ? "Working…" : isSignup ? "Create account" : "Sign in"}
+        {pending ? "Working..." : isSignup ? "Create account" : "Sign in"}
       </button>
 
       {registrationEnabled ? (

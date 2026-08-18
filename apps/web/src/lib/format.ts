@@ -5,6 +5,17 @@ export function formatRelativeTime(value: Date | string) {
   const hour = 60 * minute;
   const day = 24 * hour;
 
+  if (diffMs < 0) {
+    const aheadMs = Math.abs(diffMs);
+    if (aheadMs < hour) {
+      return "soon";
+    }
+    if (aheadMs < day) {
+      return `in ${Math.ceil(aheadMs / hour)}h`;
+    }
+    return `in ${Math.ceil(aheadMs / day)}d`;
+  }
+
   if (diffMs < minute) {
     return "just now";
   }

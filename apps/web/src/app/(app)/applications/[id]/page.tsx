@@ -1,7 +1,10 @@
-import { getOpportunityDetail } from "@jobtracker/db";
+import { getOpportunityDetail, getVisibleStages } from "@jobtracker/db";
 import { notFound } from "next/navigation";
+import { CompanyIcon } from "@/components/opportunities/company-icon";
+import { EnrichmentStatus } from "@/components/opportunities/enrichment-status";
 import { NotesPanel } from "@/components/opportunities/notes-panel";
 import { OpportunityEditor } from "@/components/opportunities/opportunity-editor";
+import { ProcessPanel } from "@/components/opportunities/process-panel";
 import { formatRelativeTime } from "@/lib/format";
 import { getSession } from "@/lib/session";
 
@@ -20,23 +23,48 @@ export default async function OpportunityDetailPage({
   }
 
   const { id } = await params;
-  const detail = await getOpportunityDetail(session.user.id, id);
+  const [detail, stages] = await Promise.all([
+    getOpportunityDetail(session.user.id, id),
+    getVisibleStages(session.user.id),
+  ]);
   if (!detail) {
     notFound();
   }
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-6">
-      <p className="text-sm text-muted">
-        {detail.stageName} · {formatRelativeTime(detail.lastActivityAt)}
-      </p>
-      <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-        {detail.title}
-      </h1>
-      <p className="mt-1 text-muted">{detail.companyName}</p>
+      <div className="flex min-w-0 items-start gap-4">
+        <CompanyIcon
+          src={detail.companyLogoUrl}
+          name={detail.companyName}
+          size="lg"
+        />
+        <div className="min-w-0">
+          <p className="inline-flex items-center gap-1.5 rounded-full border border-line bg-panel px-2.5 py-1 text-xs text-muted">
+            <span className="size-1.5 rounded-full bg-accent" />
+            {detail.stageName} · {formatRelativeTime(detail.lastActivityAt)}
+          </p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
+            {detail.title}
+          </h1>
+          <p className="mt-1 text-muted">{detail.companyName}</p>
+        </div>
+      </div>
+      <EnrichmentStatus
+        opportunityId={detail.id}
+        status={detail.enrichmentStatus}
+        error={detail.enrichmentError}
+      />
       <div className="mt-6">
         <OpportunityEditor opportunity={detail} />
       </div>
+      <ProcessPanel
+        opportunityId={detail.id}
+        stageId={detail.stageId}
+        stages={stages}
+        tasks={detail.tasks}
+        interviews={detail.interviews}
+      />
       <NotesPanel
         opportunityId={detail.id}
         notes={detail.notes.map((item) => ({

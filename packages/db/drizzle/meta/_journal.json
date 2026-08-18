@@ -15,6 +15,20 @@
       "when": 1787030498127,
       "tag": "0001_brief_brother_voodoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787040000000,
+      "tag": "0002_phase_two_enrichment",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787047200000,
+      "tag": "0003_phase_three_process",
+      "breakpoints": true
     }
   ]
 }

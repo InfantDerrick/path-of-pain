@@ -10,12 +10,22 @@ export {
   workplaceTypes,
 } from "./opportunity";
 export {
+  type CreateInterviewInput,
   type CreateNoteInput,
   type CreateOpportunityInput,
+  type CreateTaskInput,
+  createInterviewInput,
   createNoteInput,
   createOpportunityInput,
+  createTaskInput,
+  type MoveStageInput,
+  moveStageInput,
+  type StageSettingsInput,
+  stageSettingsInput,
   type UpdateOpportunityInput,
+  type UpdateTaskInput,
   updateOpportunityInput,
+  updateTaskInput,
 } from "./opportunity-input";
 export {
   type DefaultPipelineStage,

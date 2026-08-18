@@ -1,13 +1,16 @@
 import {
   createOpportunity,
   DuplicateOpportunityError,
+  enqueueOpportunityEnrichment,
   ensurePipelineStages,
   listOpportunities,
+  markOpportunityEnrichmentFailed,
 } from "@jobtracker/db";
 import { createOpportunityInput } from "@jobtracker/domain";
 import { jsonError, requireApiSession } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
+const QUEUE_FAILURE_VERSION = "queue";
 
 export async function GET() {
   const auth = await requireApiSession();
@@ -41,6 +44,25 @@ export async function POST(request: Request) {
   try {
     await ensurePipelineStages(auth.session.user.id);
     const created = await createOpportunity(auth.session.user.id, parsed.data);
+    if (created.sourceUrl && parsed.data.autoEnrich !== false) {
+      try {
+        await enqueueOpportunityEnrichment({
+          opportunityId: created.id,
+          userId: auth.session.user.id,
+        });
+      } catch (error) {
+        console.error("Failed to enqueue opportunity enrichment", error);
+        await markOpportunityEnrichmentFailed({
+          userId: auth.session.user.id,
+          opportunityId: created.id,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Could not queue enrichment.",
+          parserVersion: QUEUE_FAILURE_VERSION,
+        });
+      }
+    }
     return Response.json(created, { status: 201 });
   } catch (error) {
     if (error instanceof DuplicateOpportunityError) {

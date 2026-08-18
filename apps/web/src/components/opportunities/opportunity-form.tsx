@@ -8,7 +8,13 @@ import { workplaceLabels } from "@/lib/format";
 const fieldClass =
   "h-11 w-full rounded-lg border border-line bg-background px-3 outline-none ring-accent/30 transition focus:ring-2";
 
-export function OpportunityForm() {
+export function OpportunityForm({
+  autoEnrichDefault = true,
+  showEnrichOption = false,
+}: {
+  autoEnrichDefault?: boolean;
+  showEnrichOption?: boolean;
+}) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -19,6 +25,7 @@ export function OpportunityForm() {
   const [compensation, setCompensation] = useState("");
   const [notes, setNotes] = useState("");
   const [applied, setApplied] = useState(false);
+  const [autoEnrich, setAutoEnrich] = useState(autoEnrichDefault);
   const [error, setError] = useState<string | null>(null);
   const [existingId, setExistingId] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -41,6 +48,7 @@ export function OpportunityForm() {
         compensation,
         notes,
         intent: applied ? "APPLY" : "SAVE",
+        autoEnrich,
       }),
     });
 
@@ -117,7 +125,7 @@ export function OpportunityForm() {
           className={fieldClass}
           value={compensation}
           onChange={(event) => setCompensation(event.target.value)}
-          placeholder="Optional, e.g. 180–210k"
+          placeholder="Optional, e.g. 180-210k"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
@@ -136,7 +144,7 @@ export function OpportunityForm() {
           className="min-h-28 w-full rounded-lg border border-line bg-background px-3 py-2 outline-none ring-accent/30 transition focus:ring-2"
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
-          placeholder="How you found it, who referred you, anything raw"
+          placeholder="How you found it, who referred you, warning signs, faint hope"
         />
       </label>
       <label className="flex items-center gap-2 text-sm">
@@ -147,6 +155,23 @@ export function OpportunityForm() {
         />
         I already applied
       </label>
+      {showEnrichOption ? (
+        <label className="flex items-start gap-2 rounded-lg border border-line bg-background p-3 text-sm">
+          <input
+            className="mt-1"
+            type="checkbox"
+            checked={autoEnrich}
+            onChange={(event) => setAutoEnrich(event.target.checked)}
+          />
+          <span>
+            <span className="block font-medium">Enrich after saving</span>
+            <span className="mt-0.5 block text-xs leading-5 text-muted">
+              Optional if you included a URL. Leave it off for a purely
+              hand-labeled scrap.
+            </span>
+          </span>
+        </label>
+      ) : null}
       {error ? (
         <p className="text-sm text-danger">
           {error}
@@ -165,7 +190,7 @@ export function OpportunityForm() {
         type="submit"
         disabled={pending}
       >
-        {pending ? "Saving…" : "Save opportunity"}
+        {pending ? "Saving..." : "Save opportunity"}
       </button>
     </form>
   );

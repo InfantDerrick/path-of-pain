@@ -13,6 +13,7 @@ type OpportunityEditorProps = {
     id: string;
     title: string;
     companyName: string;
+    companyLogoUrl: string | null;
     location: string | null;
     workplaceType: string;
     compensation: string | null;
@@ -25,6 +26,9 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
   const router = useRouter();
   const [title, setTitle] = useState(opportunity.title);
   const [companyName, setCompanyName] = useState(opportunity.companyName);
+  const [companyLogoUrl, setCompanyLogoUrl] = useState(
+    opportunity.companyLogoUrl ?? "",
+  );
   const [location, setLocation] = useState(opportunity.location ?? "");
   const [sourceUrl, setSourceUrl] = useState(opportunity.sourceUrl ?? "");
   const [workplaceType, setWorkplaceType] = useState(opportunity.workplaceType);
@@ -37,6 +41,7 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
+  const [discarding, setDiscarding] = useState(false);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,6 +55,7 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
       body: JSON.stringify({
         title,
         companyName,
+        companyLogoUrl,
         location,
         sourceUrl,
         workplaceType,
@@ -67,6 +73,31 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
     }
 
     setSaved(true);
+    router.refresh();
+  }
+
+  async function discard() {
+    const confirmed = window.confirm(
+      "Discard this job? It will leave the board, but the record can still be found directly if you have the link.",
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setDiscarding(true);
+    setError(null);
+    const response = await fetch(`/api/opportunities/${opportunity.id}`, {
+      method: "DELETE",
+    });
+    setDiscarding(false);
+
+    if (!response.ok) {
+      const payload = (await response.json()) as { error?: string };
+      setError(payload.error ?? "Could not discard this job.");
+      return;
+    }
+
+    router.push("/applications");
     router.refresh();
   }
 
@@ -91,6 +122,15 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
           required
           value={companyName}
           onChange={(event) => setCompanyName(event.target.value)}
+        />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium">Icon URL or path</span>
+        <input
+          className={fieldClass}
+          value={companyLogoUrl}
+          onChange={(event) => setCompanyLogoUrl(event.target.value)}
+          placeholder="https://... or /icons/company.png"
         />
       </label>
       <label className="flex flex-col gap-1.5 text-sm">
@@ -146,10 +186,20 @@ export function OpportunityEditor({ opportunity }: OpportunityEditorProps) {
       <button
         className="h-11 rounded-lg bg-accent font-medium text-accent-foreground disabled:opacity-60"
         type="submit"
-        disabled={pending}
+        disabled={pending || discarding}
       >
         {pending ? "Saving…" : "Save changes"}
       </button>
+      <div className="border-t border-line pt-4">
+        <button
+          className="h-10 rounded-lg border border-danger/40 px-3 text-sm font-medium text-danger transition hover:bg-danger/10 disabled:opacity-60"
+          type="button"
+          disabled={pending || discarding}
+          onClick={discard}
+        >
+          {discarding ? "Discarding..." : "Discard job"}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,4 +1,5 @@
 import {
+  discardOpportunity,
   getOpportunityDetail,
   OpportunityNotFoundError,
   updateOpportunity,
@@ -58,6 +59,28 @@ export async function PATCH(request: Request, context: RouteContext) {
       error instanceof Error
         ? error.message
         : "Could not update this opportunity.",
+    );
+  }
+}
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const auth = await requireApiSession();
+  if (!auth.ok) {
+    return auth.response;
+  }
+
+  const { id } = await context.params;
+  try {
+    await discardOpportunity(auth.session.user.id, id);
+    return Response.json({ ok: true });
+  } catch (error) {
+    if (error instanceof OpportunityNotFoundError) {
+      return jsonError("Opportunity not found.", 404);
+    }
+    return jsonError(
+      error instanceof Error
+        ? error.message
+        : "Could not discard this opportunity.",
     );
   }
 }

@@ -6,7 +6,9 @@ export type ExtractionInput = {
 };
 
 export type ExtractedJob = {
+  method?: string;
   company?: string;
+  companyLogoUrl?: string;
   title?: string;
   location?: string;
   workplaceType?: WorkplaceType;

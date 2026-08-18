@@ -10,7 +10,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   },
+  "dependencies": {
+    "@jobtracker/domain": "workspace:*",
+    "cheerio": "^1.1.2",
+    "playwright": "^1.55.0"
+  },
   "devDependencies": {
+    "@types/node": "^22",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

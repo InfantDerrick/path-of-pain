@@ -1,4 +1,4 @@
-import { APP_NAME, APP_TAGLINE } from "@jobtracker/shared";
+import { APP_NAME, APP_TAGLINE } from "@jobtracker/shared/constants";
 import type { Metadata } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
 import Script from "next/script";
